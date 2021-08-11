@@ -204,7 +204,7 @@ alias gclean="git fetch --prune origin && git gc"
 #shellcheck disable=SC2145
 alias glogin="git_hub_login $@"
 alias gstatus="gh auth status --hostname dotenv get GITHUB_URL "
-alias release="release-it --increment=minor"
+alias release="npm --prefix shift-left run release"
 
 #-------------------------------------------------------------
 # Generic Alias Commands
