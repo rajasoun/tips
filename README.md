@@ -19,9 +19,9 @@ tips <flag>
 tips <command>
 tips --help
 tips --version
-tips git/docker 
+tips git/docker
 tips git/docker <command>
-tips git/docker <command> <flag> 
+tips git/docker <command> <flag>
 
 ```
 
@@ -57,7 +57,7 @@ Flags:
 Use "tips [command] --help" for more information about a command.
 ```
 
-## Libraries 
+## Libraries
 
 1. Cobra library  is used to build Tips command line app [cli].
 2. Logrus library is used to set the log status (i.e debug).
