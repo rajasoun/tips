@@ -191,7 +191,7 @@
 			"title":"Git Aliases",
 			"tip":"git config --global alias.<handle> <command> \ngit config --global alias.st status"
 		 },
-	 
+
 		 {
 			"title":"Saving current state of unstaged changes to tracked files",
 			"tip":"git stash -k",

@@ -61,7 +61,7 @@ func GitCommand() *cobra.Command {
 		Aliases: []string{},
 		Version: "0.1v",
 		Example: `tips git <command>
-		
+
 tips git stash
 "Saving current state of unstaged changes to tracked files : git stash -k" `,
 		Args: cobra.MaximumNArgs(1),
@@ -86,7 +86,7 @@ managing and distributing applications."`,
 		Aliases: []string{},
 		Version: "0.1v",
 		Example: `tips docker <command>
-	
+
 tips docker ps
 "List all containers : docker ps -a "`,
 		Args: cobra.MaximumNArgs(1),
