@@ -11,7 +11,7 @@
         "update-npm-packages": "npm update",
         "lint-staged": "lint-staged",
         "postinstall": "node bin/check-version.js && cd .. && husky install ",
-        "release": "release-it"
+        "release": "release-it --increment=minor"
     },
     "engines": {
         "node": ">= 14.17.4",
