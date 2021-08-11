@@ -9,16 +9,19 @@ on:
     branches: [ main ]
 
 jobs:
-
-  build:
-    runs-on: ubuntu-latest
+  # https://golangrepo.com/repo/mvdan-github-actions-golang-go-command-line
+  test:
+    strategy:
+      matrix:
+        go-version: [1.16.x]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
-
-    - name: Set up Go
+    - name: Install Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.16
-
+        go-version: ${{ matrix.go-version }}
+    - name: Checkout code
+      uses: actions/checkout@v2
     - name: Test
-      run: make test
+      run: go test ./...
