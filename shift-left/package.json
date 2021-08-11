@@ -1,6 +1,5 @@
 {
     "name": "shift-left",
-    "version": "0.0.1",
     "description": "Sift Left Adoption",
     "author": "Raja. S",
     "license": "ISC",
@@ -11,7 +10,7 @@
         "update-npm-packages": "npm update",
         "lint-staged": "lint-staged",
         "postinstall": "node bin/check-version.js && cd .. && husky install ",
-        "release": "release-it --increment=minor"
+        "release": "release-it "
     },
     "engines": {
         "node": ">= 14.17.4",
