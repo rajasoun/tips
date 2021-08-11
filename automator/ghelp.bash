@@ -49,6 +49,12 @@ release			- Release through Automation
 "
 }
 
+function _git_tag() {
+	VERSION=$(git describe --tags --abbrev=0 | awk -F. '{OFS="."; $NF+=1; print $0}')
+	git tag -a "$VERSION" -m "tip : $VERSION | For Release"
+	git push origin "$VERSION" --no-verify
+}
+
 function _teardown_git_flow() {
 	git config --remove-section "gitflow.path"
 	git config --remove-section "gitflow.prefix"
@@ -205,6 +211,7 @@ alias gclean="git fetch --prune origin && git gc"
 alias glogin="git_hub_login $@"
 alias gstatus="gh auth status --hostname dotenv get GITHUB_URL "
 alias release="npm --prefix shift-left run release"
+alias gtag="_git_tag"
 
 #-------------------------------------------------------------
 # Generic Alias Commands
