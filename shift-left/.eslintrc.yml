@@ -1,0 +1,19 @@
+---
+parserOptions:
+    ecmaVersion: 2017
+
+env:
+    es6: true
+
+rules:
+    quotes:
+        - error
+        - single
+    prettier/prettier: 2
+
+plugins:
+    - prettier
+
+extends:
+    - plugin:prettier/recommended
+    - prettier

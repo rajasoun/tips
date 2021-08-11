@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+
+# shellcheck source=/dev/null
+. "$(dirname "$0")/_/husky.sh"
+. "$(dirname "$0")/common.sh"
+
+printf "\n1. Pre Commit Steps: (pre-commit)"
+
+FILES=$(git diff --cached --name-only --diff-filter=ACMR "*.js" "*.*" | sed 's| |\\ |g')
+[ -z "$FILES" ] && exit 0
+
+# Prettify all selected files
+printf "\n1.1. Prettier Files Global Configuration: (pre-commit)"
+echo "$FILES" | xargs npm run --prefix shift-left lint-staged
+
+# pre-commit checks
+if command_exists pre-commit && test -t 1; then
+    printf "\n1.2. Run Pre Commit Checks"
+    pre-commit run --all-files
+fi
+
+# Add back the modified/prettified files to staging
+printf "\n1.3. Git Stage files chnaged"
+echo "$FILES" | xargs git add
+
+exit 0

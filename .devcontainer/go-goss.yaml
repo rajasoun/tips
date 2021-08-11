@@ -1,0 +1,44 @@
+---
+command:
+  go version:
+    exit-status: 0
+    stdout:
+      - 1.16.6
+    stderr: []
+    timeout: 0
+  goss --version:
+    exit-status: 0
+    stdout:
+      - v0.3.16
+    stderr: []
+    timeout: 0
+  taskctl --version:
+    exit-status: 0
+    stdout:
+      - 1.4.2
+    stderr: []
+    timeout: 0
+  node --version:
+    exit-status: 0
+    stdout:
+      - v14.17.4
+    stderr: []
+    timeout: 0
+  gh --version:
+    exit-status: 0
+    stdout:
+      - 1.13.1
+    stderr: []
+    timeout: 0
+  shellspec --version:
+    exit-status: 0
+    stdout:
+      - 0.28.1
+    stderr: []
+    timeout: 0
+  kcov --version:
+    exit-status: 0
+    stdout:
+      - 38
+    stderr: []
+    timeout: 0

@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+# shellcheck source=/dev/null
+. "$(dirname "$0")/_/husky.sh"
+. "$(dirname "$0")/common.sh"
+
+printf "\nPre Push Steps: (pre-push) : Test Suite"
+
+make test-cover
