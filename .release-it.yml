@@ -1,0 +1,9 @@
+git:
+  requireCleanWorkingDir: true
+  requireBranch: main
+  tagname: "${version}"
+  push: true
+  commit: false
+  #changelog: "npx auto-changelog --commit-limit false --template keepachangelog && git add CHANGELOG.md"
+github:
+  release: true
