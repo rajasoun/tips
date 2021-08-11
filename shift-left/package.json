@@ -36,5 +36,6 @@
         "commitizen": {
             "path": "./shift-left/node_modules/cz-conventional-changelog"
         }
-    }
+    },
+    "version": "0.0.2"
 }
