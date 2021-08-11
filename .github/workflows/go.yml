@@ -24,4 +24,4 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Test
-      run: make test-cover
+      run: go test ./... --cover -coverprofile coverage/coverage.out
