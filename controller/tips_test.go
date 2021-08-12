@@ -1,4 +1,4 @@
-// +build !integration
+// Licensed under the Creative Commons License.
 
 package controller
 
@@ -15,8 +15,8 @@ func init() {
 }
 
 func TestGetTipForTopicIntegration(t *testing.T) {
-	output_buffer := bytes.Buffer{}
-	input_ouputData := []struct {
+	outputBuffer := bytes.Buffer{}
+	inputOuputData := []struct {
 		name  string
 		input string
 		want  string
@@ -24,10 +24,10 @@ func TestGetTipForTopicIntegration(t *testing.T) {
 		{name: "Checking with Valid input", input: "git delete", want: "Delete remote branch"},
 		{name: "Checking with invalid input", input: "hello", want: "invalid command"},
 	}
-	for _, tt := range input_ouputData {
+	for _, tt := range inputOuputData {
 		t.Run(tt.name, func(t *testing.T) {
-			GetTipForTopic(tt.input, &output_buffer)
-			got := output_buffer.String()
+			GetTipForTopic(tt.input, &outputBuffer)
+			got := outputBuffer.String()
 			assert.Contains(t, got, tt.want)
 		})
 	}

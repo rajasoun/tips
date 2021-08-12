@@ -1,3 +1,5 @@
+// Licensed under the Creative Commons License.
+
 package controller
 
 import (

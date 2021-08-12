@@ -1,3 +1,5 @@
+// Licensed under the Creative Commons License.
+
 // +build integration
 
 package model

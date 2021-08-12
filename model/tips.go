@@ -1,3 +1,5 @@
+// Licensed under the Creative Commons License.
+
 package model
 
 import (
@@ -10,38 +12,38 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// tips class with field(title and tip)
 type Tips struct {
 	Title string `json:"title"`
 	Tip   string `json:"tip"`
 }
 type Tools struct {
-	Git    []Tips `json : "git"`
-	Docker []Tips `json : "docker"`
+	Git    []Tips `json:"git"`
+	Docker []Tips `json:"docker"`
 }
 
 const (
-	default_value = "invalid command ,please pass valid tool command "
+	defaultValue = "invalid command ,please pass valid tool command "
+	emptyString  = " "
 )
 
-//GetTip returning Tip/Command to the controller
+// GetTip returning Tip/Command to the controller
 func GetTip(title string) string {
-	data, _ := loadTipsFromJson()
+	data, _ := loadTipsFromJSON()
 	commands := getAllCommands(data, title)
 	for _, tip := range commands {
 		return tip
 	}
-	return default_value
+	return defaultValue
 }
 
-//getting all tips and titles
+// getting all tips and titles
 func getAllCommands(data Tools, title string) []string {
-	title = title + " "
-	cmdTool := strings.Split(title, " ")
+	title += emptyString
+	cmdTool := strings.Split(title, emptyString)
 	commands := make([]string, 0)
 	if cmdTool[0] == "git" {
 		for _, value := range data.Git {
-			if strings.Contains(value.Tip, cmdTool[1]) {
+			if strings.Contains(value.Tip, cmdTool[1]) || strings.Contains(value.Title, cmdTool[1]) {
 				command := value.Title + " : " + value.Tip
 				commands = append(commands, command)
 			}
@@ -57,20 +59,19 @@ func getAllCommands(data Tools, title string) []string {
 	return commands
 }
 
-func loadTipsFromJson() (Tools, error) {
+func loadTipsFromJSON() (Tools, error) {
 	// run an app from main.go -> file path should be "data/tips.json"
 	// if want to check all unit test cases ->file path should be "../data/tips.json"
-	var path = getJsonFilePath()
+	var path = getJSONFilePath()
 	var data []byte
-	data, _ = readJsonFile(path)
-	//var result []Tips
+	data, _ = readJSONFile(path)
 	var result Tools
-	json.Unmarshal([]byte(data), &result)
-	return result, nil
+	err := json.Unmarshal(data, &result)
+	return result, err
 }
 
 // getting file path for main file and testing function
-func getJsonFilePath() string {
+func getJSONFilePath() string {
 	currentDir, _ := getCurrentWorkingDir()
 	// remove base directory from the workingDir when run from test
 	baseDir := filepath.Base(currentDir)
@@ -82,11 +83,11 @@ func getJsonFilePath() string {
 	return currentDir + "/data/tips.json" // file path
 }
 
-// get json file data
+//  get json file data
 var fileRead = os.ReadFile
 
-//reading data from json file
-func readJsonFile(path string) ([]byte, error) {
+// reading data from json file
+func readJSONFile(path string) ([]byte, error) {
 	data, err := fileRead(path)
 	if err != nil {
 		logrus.WithField("file path ", path).Debug("unsuccessfully reading the file path ")
@@ -99,7 +100,7 @@ func readJsonFile(path string) ([]byte, error) {
 // Get Working directory function
 var osGetWd = os.Getwd
 
-//getting current working dir.
+// getting current working dir.
 func getCurrentWorkingDir() (string, error) {
 	workingDir, err := osGetWd()
 	if err != nil {

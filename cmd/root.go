@@ -1,3 +1,5 @@
+// Licensed under the Creative Commons License.
+
 package cmd
 
 import (
@@ -7,16 +9,15 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-
 	"github.rajasoun/tips/controller"
 )
 
 var (
-	gitCmd         = GitCommand()
-	rootCmd        = NewRootCmd()
-	dockerCmd      = DockerCommand()
-	cmd            *cobra.Command
-	debug, cfgFile string
+	gitCmd                   = GitCommand()
+	rootCmd                  = NewRootCmd()
+	dockerCmd                = DockerCommand()
+	cmd                      *cobra.Command
+	debug, cfgFile, toolName string
 )
 
 const (
@@ -26,7 +27,6 @@ const (
 	firstLetter string = "g"
 )
 
-//root cobra command functionality
 func NewRootCmd() *cobra.Command {
 	cmd = &cobra.Command{
 		Use:     "tips",
@@ -40,12 +40,13 @@ func NewRootCmd() *cobra.Command {
 tips git push
 tips docker ps`,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			var err error
 			if len(args) == 0 {
-				cmd.Help()
+				err = cmd.Help()
 			} else if err := isValidArguments(cmd.OutOrStdout(), args); err != nil {
 				return err
 			}
-			return nil
+			return err
 		},
 	}
 	return cmd
@@ -67,16 +68,15 @@ tips git stash
 		Args: cobra.MaximumNArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := isValidTopic(args, "git", cmd); err != nil {
-				return err
-			}
-			return nil
+			toolName = "git"
+			err := isValidTopic(args, toolName, cmd)
+			return err
 		},
 	}
 	return gitcmd
 }
 
-//docker command functionality
+//  docker command functionality
 func DockerCommand() *cobra.Command {
 	var dockercmd = &cobra.Command{
 		Use:   "docker",
@@ -92,10 +92,9 @@ tips docker ps
 		Args: cobra.MaximumNArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := isValidTopic(args, "docker", cmd); err != nil {
-				return err
-			}
-			return nil
+			toolName = "docker"
+			err := isValidTopic(args, toolName, cmd)
+			return err
 		},
 	}
 	return dockercmd
@@ -107,52 +106,54 @@ func Execute(writer io.Writer) error {
 	return rootCmd.Execute()
 }
 
-//Checking argument and pass input to controller
+//  Checking argument and pass input to controller
 func isValidTopic(args []string, toolName string, cmd *cobra.Command) error {
-	if len(args) == 0 && debug == emptyString {
-		cmd.Help()
-		return nil
-	} else if len(args) == 0 && debug != emptyString {
+	switch {
+	case len(args) == 0 && debug == emptyString:
+		err := cmd.Help()
+		return err
+	case len(args) == 0 && debug != emptyString:
 		return errors.New("please add an argument to debug")
-	} else if args[0] != emptyString || debug != emptyString {
-		//calling setUplogs func to set logger level for debugging the code
-		setUpLogs(cmd.OutOrStdout(), debug)
+	case args[0] != emptyString || debug != emptyString:
+		if debug != emptyString {
+			err := setUpLogs(cmd.OutOrStdout(), debug)
+			if err != nil {
+				return err
+			}
+		}
 		logrus.WithField("loglevel", debug).Debug("successfully set logger level to debug ")
-		// getting topic
 		input, err := getTopic(args)
 		if err != nil {
 			logrus.WithField("err", err).Debug("invalid user input")
 			return err
-		} else {
-			input = toolName + " " + input
-			logrus.WithField("userInput", input).Debug("successfully getting valid input ")
-			controller.GetTipForTopic(input, cmd.OutOrStdout())
 		}
+		input = toolName + " " + input
+		logrus.WithField("userInput", input).Debug("successfully getting valid input ")
+		controller.GetTipForTopic(input, cmd.OutOrStdout())
 	}
+
 	return nil
 }
 
 // getting topic with checking validation
 func getTopic(args []string) (string, error) {
-	userInput := args[0]
+	var userInput = args[0]
 	if isValidInput(userInput) {
 		logrus.WithField("topic", userInput).Debug("successfully validation checked")
 		return userInput, nil
 	}
-	var validError error = errors.New("argument should be greater than 2")
-	return "", validError
+	return "", errors.New("argument should be greater than 1")
 }
 
-//checking  userinput validation
+//  checking  userinput validation
 func isValidInput(userInput string) bool {
-	//to do len 1
 	if len(userInput) > validLen && len(userInput) != 0 || userInput == validArg {
 		return true
 	}
 	return false
 }
 
-//checking valid arguments
+// checking valid arguments
 func isValidArguments(writer io.Writer, args []string) error {
 	if args[0] != validArg {
 		if string(args[0][0]) == firstLetter {
@@ -164,7 +165,7 @@ func isValidArguments(writer io.Writer, args []string) error {
 	return errors.New("invalid command for tips")
 }
 
-//setting log level
+// setting log level
 func setUpLogs(out io.Writer, level string) error {
 	logrus.SetOutput(out)
 	logLevel, err := logrus.ParseLevel(level)
@@ -178,7 +179,7 @@ func setUpLogs(out io.Writer, level string) error {
 
 func init() {
 	cmd.PersistentFlags().StringVarP(&debug, "debug", "", "", "verbose logging")
-	cmd.PersistentFlags().MarkHidden("debug")
+	_ = cmd.PersistentFlags().MarkHidden("debug")
 	rootCmd.AddCommand(gitCmd)
 	rootCmd.AddCommand(dockerCmd)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.tips.yaml)")
