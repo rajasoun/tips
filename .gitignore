@@ -94,8 +94,9 @@ $RECYCLE.BIN/
 vscode-iaac/go
 .build-go
 .cache_ggshield
-bin
 ssh-keys/*
 !ssh-keys/.gitkeep
 .env.bak
 token.txt
+bin
+!shift-left/bin
