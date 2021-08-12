@@ -1,3 +1,5 @@
+// Licensed under the Creative Commons License.
+
 package cmd
 
 import (
@@ -57,7 +59,6 @@ func TestExecute(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rootCmd.SetArgs([]string{tt.flag, tt.input})
-			//NewRootCmd().Flags().Set(tt.flag, tt.input)
 			writer := &bytes.Buffer{}
 			err := Execute(writer)
 			if err != nil {
@@ -78,7 +79,7 @@ func Test_SetLogger(t *testing.T) {
 		level string
 	}{
 		{"Checking set level logger ", "", "debug"},
-		{"invalid level logger", "error", "dummy"},
+		{"invalid level logger", "not a valid logrus Level", "dummy"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -88,6 +89,7 @@ func Test_SetLogger(t *testing.T) {
 				assert.Error(t, err)
 			} else {
 				got := output.String()
+				fmt.Print(got)
 				want := tt.want
 				assert.Equal(t, got, want)
 			}
@@ -135,12 +137,10 @@ func Test_GitCommand(t *testing.T) {
 		rootCmd.SetArgs([]string{"git", expected})
 		err := gitCmd.Execute()
 		if err != nil {
-			//t.Fatal(err)
 			assert.Error(t, err)
 		}
 		out, err := ioutil.ReadAll(outputBuffer)
 		if err != nil {
-			//t.Fatal(err)
 			assert.Error(t, err)
 		}
 		got := string(out)
@@ -158,6 +158,14 @@ func Test_GitCommand(t *testing.T) {
 		rootCmd.SetOut(outputBuffer)
 		rootCmd.SetArgs([]string{"git", "--debug", "debug"})
 		err := gitCmd.Execute()
+		assert.Error(t, err)
+	})
+	t.Run("checking  valid logger status", func(t *testing.T) {
+		outputBuffer := bytes.NewBufferString("")
+		rootCmd.SetOut(outputBuffer)
+		rootCmd.SetArgs([]string{"git", "push", "--debug", "dummy"})
+		err := gitCmd.Execute()
+		fmt.Print(err)
 		assert.Error(t, err)
 	})
 }

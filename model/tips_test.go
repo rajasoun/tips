@@ -1,3 +1,5 @@
+// Licensed under the Creative Commons License.
+
 // +build !integration
 
 package model
@@ -15,7 +17,7 @@ func init() {
 }
 
 func TestGetTip(t *testing.T) {
-	input_ouputData := []struct {
+	inputOuputData := []struct {
 		name  string
 		input string
 		want  string
@@ -24,7 +26,7 @@ func TestGetTip(t *testing.T) {
 		{name: "Get Tip for invalid Topic - dummy", input: "dummy", want: "invalid command ,please pass valid tool command "},
 		{name: "Get Tip for valid Topic - log", input: "docker log", want: "Search change by content : docker log -S'<a term in the source>'"},
 	}
-	for _, tt := range input_ouputData {
+	for _, tt := range inputOuputData {
 		t.Run(tt.name, func(t *testing.T) {
 			got := GetTip(tt.input)
 			assert.Equal(t, got, tt.want)
@@ -32,16 +34,16 @@ func TestGetTip(t *testing.T) {
 	}
 }
 
-func TestLoadTipsFromJson(t *testing.T) {
+func TestLoadTipsFromJSON(t *testing.T) {
 	t.Run("Load Tips From Json File and check if there are tips ", func(t *testing.T) {
-		_, err := loadTipsFromJson()
+		_, err := loadTipsFromJSON()
 		assert.NoError(t, err)
 	})
 }
 
 func TestGetTipJsonFilePath(t *testing.T) {
 	t.Run("Check Getting Tips Json File Path Dynalically", func(t *testing.T) {
-		got := getJsonFilePath()
+		got := getJSONFilePath()
 		want := "/data/tips.json"
 		assert.Contains(t, got, want)
 	})
@@ -74,24 +76,24 @@ func TestGetCurrentWorkingDir(t *testing.T) {
 func TestReadJsonFile(t *testing.T) {
 	t.Run("Loading invalid Json File should fail", func(t *testing.T) {
 		// Mocked function for os.ReadFile
-		file_read := func(string) ([]byte, error) {
+		fileReading := func(string) ([]byte, error) {
 			myErr := errors.New("Simulated error")
 			return nil, myErr
 		}
-		fileRead = file_read
-		_, err := readJsonFile("/data")
+		fileRead = fileReading
+		_, err := readJSONFile("/data")
 		assert.Error(t, err)
 	})
 	t.Run("Unit Testing readjson file data", func(t *testing.T) {
-		file_read := func(string) ([]byte, error) {
+		fileReading := func(string) ([]byte, error) {
 			var data = []byte(`[{
 				"title":"Rebases 'feature' to 'master' and merges it in to master ",
 				"tip":"git rebase master feature && git checkout master && git merge -"
 			 }]`)
 			return data, nil
 		}
-		fileRead = file_read
-		got, _ := readJsonFile("/gophers/workspace//data/tips.json")
+		fileRead = fileReading
+		got, _ := readJSONFile("/gophers/workspace//data/tips.json")
 		want := "Rebases 'feature' to 'master'"
 		assert.Contains(t, string(got), want)
 	})

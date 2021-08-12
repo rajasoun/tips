@@ -770,14 +770,14 @@
 	"docker": [
         {
 			"title": "Everyday Git in twenty commands or so",
-			"tip": "docker help everyday"
+			"tip": "docker run --help "
 		},
 		{
 			"title": "List all containers",
 			"tip": "docker ps -a"
 		},
 		{
-			"title": "Stop a container",
+			"title": "Stop running a container",
 			"tip": "docker stop [container-name|container-id]"
 		},
 		{
@@ -785,12 +785,36 @@
 			"tip": " docker images"
 		},
 		{
-			"title": "Show helpful guides that come with Git",
+			"title": "Show helpful guides that come with Docker",
 			"tip": "docker help -g"
 		},
 		{
 			"title": "Search change by content",
 			"tip": "docker log -S'<a term in the source>'"
+		},
+		{
+			"title":"For searching an image in the Docker Hub",
+			"tip":"docker search <image>"
+		},
+		{
+			"title":"Runs a command in a run-time container",
+			"tip":"docker exec"
+		},
+		{
+			"title":"creates a new image from a container’s changes",
+			"tip":"docker commit <conatainer id> <username/imagename> "
+		},
+		{
+			"title":"builds an image form a Docker file",
+			"tip":"docker build <path to docker file>"
+		},
+		{
+			"title":"kills the container its execution immediately",
+			"tip":"docker kill <container id>"
+		},
+		{
+			"title":"delete a stopped container",
+			"tip": "docker rm <container id>"
 		}
 
 	]
