@@ -98,3 +98,14 @@ func TestReadJsonFile(t *testing.T) {
 		assert.Contains(t, string(got), want)
 	})
 }
+
+func TestReadfromYMLConfig(t *testing.T) {
+	t.Run("Checking Error on not found file", func(t *testing.T) {
+		_, err := readfromYMLConfig("/dummy/.json")
+		assert.Error(t, err)
+	})
+	t.Run("checking data load into struct", func(t *testing.T) {
+		_, err := readfromYMLConfig(fileName)
+		assert.NoError(t, err)
+	})
+}

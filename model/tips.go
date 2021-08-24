@@ -5,11 +5,13 @@ package model
 import (
 	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 )
 
 type Tips struct {
@@ -21,9 +23,19 @@ type Tools struct {
 	Docker []Tips `json:"docker"`
 }
 
+type confYml struct {
+	Dir string `yaml:"tipsDataPath"`
+}
+
 const (
 	defaultValue = "invalid command ,please pass valid tool command "
 	emptyString  = " "
+)
+
+var (
+	path     = os.Getenv("HOME")
+	fileName = "/.tips.yml"
+	fileRead = os.ReadFile
 )
 
 // GetTip returning Tip/Command to the controller
@@ -60,7 +72,7 @@ func getAllCommands(data Tools, title string) []string {
 }
 
 func loadTipsFromJSON() (Tools, error) {
-	// run an app from main.go -> file path should be "data/tips.json"
+	// run an app from main.go -> file path should be "data/tips.json" from developer side
 	// if want to check all unit test cases ->file path should be "../data/tips.json"
 	var path = getJSONFilePath()
 	var data []byte
@@ -70,21 +82,33 @@ func loadTipsFromJSON() (Tools, error) {
 	return result, err
 }
 
-// getting file path for main file and testing function
-func getJSONFilePath() string {
-	currentDir, _ := getCurrentWorkingDir()
-	// remove base directory from the workingDir when run from test
-	baseDir := filepath.Base(currentDir)
+// for main -- path should be $home+read from .tips.yml file from user side
+// for testing -- ..//data/tips.json
 
-	isInTest := os.Getenv("GO_ENV") == "test"
-	if isInTest {
-		currentDir = strings.ReplaceAll(currentDir, baseDir, "")
+func readfromYMLConfig(fileName string) (string, error) {
+	config := confYml{}
+	yamlFile, err := ioutil.ReadFile(path + fileName)
+	if err != nil {
+		return "", err
 	}
-	return currentDir + "/data/tips.json" // file path
+	err = yaml.Unmarshal(yamlFile, &config)
+	dirPath := path + config.Dir
+	return dirPath, err
 }
 
-//  get json file data
-var fileRead = os.ReadFile
+// getting file path for main file and testing function
+func getJSONFilePath() string {
+	currentDir, _ := readfromYMLConfig(fileName)
+	isInTest := os.Getenv("GO_ENV") == "test"
+	if isInTest {
+		currentDir, _ = getCurrentWorkingDir()
+		baseDir := filepath.Base(currentDir)
+		currentDir = strings.ReplaceAll(currentDir, baseDir, "")
+		currentDir += "/data/tips.json"
+	}
+	// return currentDir + "/data/tips.json" // file path
+	return currentDir
+}
 
 // reading data from json file
 func readJSONFile(path string) ([]byte, error) {
