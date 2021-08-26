@@ -6,10 +6,15 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"net/http"
+	"os"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.rajasoun/tips/controller"
+
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -18,6 +23,12 @@ var (
 	dockerCmd                = DockerCommand()
 	cmd                      *cobra.Command
 	debug, cfgFile, toolName string
+
+	createFile = os.Create
+	copyData   = io.Copy
+	getRequest = http.Get
+	path       = os.Getenv("HOME")
+	fileName   = "/.tips.yml"
 )
 
 const (
@@ -25,6 +36,7 @@ const (
 	validArg    string = "git"
 	emptyString string = ""
 	firstLetter string = "g"
+	dataLink    string = "https://raw.githubusercontent.com/rajasoun/tips/main/data/tips.json"
 )
 
 func NewRootCmd() *cobra.Command {
@@ -178,9 +190,98 @@ func setUpLogs(out io.Writer, level string) error {
 }
 
 func init() {
+	_ = InitializeTipsTool(fileName)
 	cmd.PersistentFlags().StringVarP(&debug, "debug", "", "", "verbose logging")
 	_ = cmd.PersistentFlags().MarkHidden("debug")
 	rootCmd.AddCommand(gitCmd)
 	rootCmd.AddCommand(dockerCmd)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.tips.yaml)")
+}
+
+type confYml struct {
+	Dir string `yaml:"tipsDataPath"`
+}
+
+func isExist(fileDir string) bool {
+	if fileInfo, err := os.Stat(fileDir); err != nil {
+		if os.IsNotExist(err) && fileInfo == nil {
+			return false
+		}
+	}
+	return true
+}
+func checkTipsData(fileName string) bool {
+	pathv := path + fileName
+	return isExist(pathv)
+}
+
+func createDir(dirPath string) error {
+	info, err := createFile(dirPath) // create tips.yml
+	if err != nil {
+		fmt.Println("File info", info)
+		return errors.New("issue on creating file")
+	}
+	configData := map[string]string{
+		"tipsDataPath": "/.tips/tips.json",
+	}
+	if cfgFile != "" {
+		configData["tipsDataPath"] = cfgFile
+	}
+	fmt.Println(configData["tipsDataPath"])
+
+	data, _ := yaml.Marshal(&configData)
+	_ = ioutil.WriteFile(dirPath, data, 0)
+	return nil
+}
+
+// download url json file and save in filepath
+func downloadFileFromURL(url string, filepath string) error {
+	out, err := createFile(filepath)
+	if err != nil {
+		logrus.WithField("err", err).Debug("issue in creating file")
+		return err
+	}
+	defer out.Close()
+	resp, err := getRequest(url)
+	if err != nil {
+		logrus.WithField("err", err).Debug("getting err on get http request")
+		return err
+	}
+	defer resp.Body.Close()
+	_, err = copyData(out, resp.Body)
+	if err != nil {
+		logrus.WithField("err", err).Debug("getting error on copy data in dir")
+		return err
+	}
+	return nil
+}
+
+// reading yml file data
+func readfromYMLConfig(filePath string) (confYml, error) {
+	config := confYml{}
+	yamlFile, err := ioutil.ReadFile(path + filePath)
+	if err != nil {
+		return config, err
+	}
+	err = yaml.Unmarshal(yamlFile, &config)
+	return config, err
+}
+
+func InitializeTipsTool(fileName string) error {
+	// to do more condition
+	// if .tips.yml not exist -- create it and download json
+	// if exist ---check .tips dir is exist or not
+	// if not create .tips dir and download json
+	// if all are exist then update the .tips.yml and json file
+	if !checkTipsData(fileName) {
+		err := createDir(path + fileName)
+		if err != nil {
+			return err
+		}
+	}
+	// to do add more condition when user add --config flag
+	_ = os.Mkdir(path+"/.tips", 0700)
+	pathValue, _ := readfromYMLConfig(fileName)
+	err := downloadFileFromURL(dataLink, path+pathValue.Dir)
+	return err
 }
