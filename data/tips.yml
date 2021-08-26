@@ -1,0 +1,4 @@
+--- 
+  
+tipsDataLocalPath: "$HOME/.tips/data.json"
+tipsDataRemotePath: "https://raw.githubusercontent.com/rajasoun/tips/main/data/tips.json"
