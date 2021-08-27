@@ -6,10 +6,12 @@ package model
 
 import (
 	"errors"
+	"io/ioutil"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 )
 
 func init() {
@@ -104,8 +106,41 @@ func TestReadfromYMLConfig(t *testing.T) {
 		_, err := readfromYMLConfig("/dummy/.json")
 		assert.Error(t, err)
 	})
-	t.Run("checking data load into struct", func(t *testing.T) {
-		_, err := readfromYMLConfig(fileName)
+	t.Run("checking the user file path ", func(t *testing.T) {
+		err := mockcreatetestfile("testfile.yml", "dummy/dummy.txt")
+		if err != nil {
+			t.Fatal(err)
+		}
+		path = ""
+		got, err := readfromYMLConfig("testfile.yml")
+		want := "dummy/dummy.txt"
+		assert.Equal(t, got, want)
 		assert.NoError(t, err)
+		os.Remove("testfile.yml")
 	})
+	t.Run("checking the user file path ", func(t *testing.T) {
+		err := mockcreatetestfile("testfile.yml", ".tips/tips.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		path = ""
+		got, err := readfromYMLConfig("testfile.yml")
+		want := ".tips/tips.json"
+		assert.Contains(t, got, want)
+		assert.NoError(t, err)
+		os.Remove("testfile.yml")
+	})
+}
+
+func mockcreatetestfile(testfile string, data string) error {
+	_, err := os.Create(testfile)
+	if err != nil {
+		return err
+	}
+	filedata := map[string]string{
+		"tipsDataPath": data,
+	}
+	dataa, _ := yaml.Marshal(&filedata)
+	err = ioutil.WriteFile(testfile, dataa, 0)
+	return err
 }
