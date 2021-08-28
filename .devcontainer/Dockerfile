@@ -72,6 +72,10 @@ COPY --from=shellspec-kov   /usr/local/share/doc/kcov   /usr/local/share/doc/kco
 RUN set -ex \
     && curl -fsSL https://goss.rocks/install | sh
 
+# tips - tips toll for git, docker
+RUN set -ex \
+    && curl -fsSL https://raw.githubusercontent.com/rajasoun/tips/main/install.sh | bash
+
 # Sentry CLI
 RUN set -ex \
     && curl -fsSL https://sentry.io/get-cli/ | bash
