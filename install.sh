@@ -47,7 +47,6 @@ function install_tips() {
     chmod +x "$INSTALL_LOC/tips"
     rm -fr "/tmp/tips"
     echo "TIPS $TIPS_VER has been installed to $INSTALL_LOC"
-    tips --version
 }
 
 install_tips
