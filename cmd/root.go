@@ -53,6 +53,8 @@ tips git push
 tips docker ps`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var err error
+			//	setConfigFilePath()
+			_ = InitializeTipsTool(fileName)
 			if len(args) == 0 {
 				err = cmd.Help()
 			} else if err := isValidArguments(cmd.OutOrStdout(), args); err != nil {
@@ -190,12 +192,11 @@ func setUpLogs(out io.Writer, level string) error {
 }
 
 func init() {
-	_ = InitializeTipsTool(fileName)
 	cmd.PersistentFlags().StringVarP(&debug, "debug", "", "", "verbose logging")
 	_ = cmd.PersistentFlags().MarkHidden("debug")
 	rootCmd.AddCommand(gitCmd)
 	rootCmd.AddCommand(dockerCmd)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.tips.yaml)")
+	cmd.PersistentFlags().StringVarP(&cfgFile, "cfgFile", "", "", "config file (default is $HOME/.tips.yaml ,path is $HOME/.tips/tips.json)")
 }
 
 type confYml struct {
@@ -221,14 +222,16 @@ func createDir(dirPath string) error {
 		fmt.Println("File info", info)
 		return errors.New("issue on creating file")
 	}
+	return rewriteDatainYml(dirPath)
+}
+func rewriteDatainYml(dirPath string) error {
 	configData := map[string]string{
 		"tipsDataPath": "/.tips/tips.json",
 	}
 	if cfgFile != "" {
 		configData["tipsDataPath"] = cfgFile
 	}
-	fmt.Println(configData["tipsDataPath"])
-
+	logrus.WithField("path", configData).Debug("path mention")
 	data, _ := yaml.Marshal(&configData)
 	_ = ioutil.WriteFile(dirPath, data, 0)
 	return nil
@@ -268,20 +271,21 @@ func readfromYMLConfig(filePath string) (confYml, error) {
 }
 
 func InitializeTipsTool(fileName string) error {
-	// to do more condition
-	// if .tips.yml not exist -- create it and download json
-	// if exist ---check .tips dir is exist or not
-	// if not create .tips dir and download json
-	// if all are exist then update the .tips.yml and json file
+	var err error
 	if !checkTipsData(fileName) {
-		err := createDir(path + fileName)
+		err = createDir(path + fileName)
 		if err != nil {
 			return err
 		}
+	} else {
+		_ = rewriteDatainYml(path + fileName)
 	}
-	// to do add more condition when user add --config flag
-	_ = os.Mkdir(path+"/.tips", 0700)
-	pathValue, _ := readfromYMLConfig(fileName)
-	err := downloadFileFromURL(dataLink, path+pathValue.Dir)
+	// into other file
+	if cfgFile == "" {
+		pathValue, _ := readfromYMLConfig(fileName)
+		_ = os.Mkdir(path+"/.tips", 0700)
+		err = downloadFileFromURL(dataLink, path+pathValue.Dir)
+		logrus.WithField("download", err).Debug("not able to download")
+	}
 	return err
 }

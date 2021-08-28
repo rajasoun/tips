@@ -92,8 +92,12 @@ func readfromYMLConfig(fileName string) (string, error) {
 		return "", err
 	}
 	err = yaml.Unmarshal(yamlFile, &config)
-	dirPath := path + config.Dir
-	return dirPath, err
+	// fmt.Println("Path", config.Dir)
+	logrus.WithField("command", config).Debug("path")
+	if strings.Contains(config.Dir, ".tips/tips.json") {
+		return path + config.Dir, err
+	}
+	return config.Dir, err
 }
 
 // getting file path for main file and testing function

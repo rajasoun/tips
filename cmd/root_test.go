@@ -47,7 +47,7 @@ func Test_NewRootCmd(t *testing.T) {
 	t.Run("checking config valid path for data file from user", func(t *testing.T) {
 		outputBuffer := bytes.NewBufferString("")
 		rootCmd.SetOut(outputBuffer)
-		rootCmd.SetArgs([]string{"--config", "/dummy/./dummy.json"})
+		rootCmd.SetArgs([]string{"--cfgFile", "/dummy/./dummy.json"})
 		err := rootCmd.Execute()
 		if err != nil {
 			assert.Error(t, err)
@@ -183,13 +183,13 @@ func Test_GitCommand(t *testing.T) {
 		rootCmd.SetOut(outputBuffer)
 		rootCmd.SetArgs([]string{"git", "push", "--debug", "dummy"})
 		err := gitCmd.Execute()
-		fmt.Print(err)
 		assert.Error(t, err)
 	})
 }
 func TestDownloadFileFromURL(t *testing.T) {
+	file := "dummytest.json"
 	t.Run("Getting error when url is not correct", func(t *testing.T) {
-		got := downloadFileFromURL("", "tips.json")
+		got := downloadFileFromURL("", file)
 		assert.Error(t, got)
 	})
 	t.Run("getting error when saving file path is not correct", func(t *testing.T) {
@@ -197,29 +197,35 @@ func TestDownloadFileFromURL(t *testing.T) {
 		assert.Error(t, got)
 	})
 	t.Run("checking get noerror on downloading the json file from url", func(t *testing.T) {
-		got := downloadFileFromURL(dataLink, "tips.json")
+		got := downloadFileFromURL(dataLink, file)
 		assert.NoError(t, got)
 	})
-
 	t.Run("creating issue on copy the json file in dir path", func(t *testing.T) {
 		copyFunc := func(io.Writer, io.Reader) (int64, error) {
 			var a int64
 			return a, errors.New("error")
 		}
 		copyData = copyFunc
-		got := downloadFileFromURL(dataLink, "tips.json")
+		got := downloadFileFromURL(dataLink, file)
 		assert.Error(t, got)
 	})
+	os.Remove(file)
 }
 
 func Test_checkTipsData(t *testing.T) {
 	t.Run("checking home dir  when file is present", func(t *testing.T) {
-		got := checkTipsData(fileName)
+		file := "/dummy.txt"
+		_, err := os.Create(path + file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		got := checkTipsData(file)
 		want := true
 		assert.Equal(t, got, want)
+		os.Remove(path + file)
 	})
 	t.Run("if file is not present", func(t *testing.T) {
-		got := checkTipsData("xyz.yml")
+		got := checkTipsData("xyz.txt")
 		want := false
 		assert.Equal(t, got, want)
 	})
@@ -227,8 +233,10 @@ func Test_checkTipsData(t *testing.T) {
 
 func Test_createDir(t *testing.T) {
 	t.Run("creating new dir ", func(t *testing.T) {
-		got := createDir(".data.yml")
+		file := "xyz.yml"
+		got := createDir(file)
 		assert.NoError(t, got)
+		os.Remove(file)
 	})
 	t.Run("If dir path is not exist to create a file", func(t *testing.T) {
 		createfileError := func(string) (*os.File, error) {
@@ -240,14 +248,26 @@ func Test_createDir(t *testing.T) {
 	})
 }
 
+func TestReadfromYMLConfig(t *testing.T) {
+	t.Run("Reading data from yml file", func(t *testing.T) {
+		_, err := readfromYMLConfig("/dummy/.json")
+		assert.Error(t, err)
+	})
+	t.Run(" getting noerror on reading data from yml file", func(t *testing.T) {
+		// refactor create a mock file
+		got, err := readfromYMLConfig(fileName)
+		assert.NoError(t, err)
+		assert.Nil(t, err)
+		assert.NotNil(t, got)
+	})
+}
+
 func Test_initilizeTipsTool(t *testing.T) {
 	t.Run("Checking data is loading or not from yml file", func(t *testing.T) {
+		rootCmd.SetArgs([]string{})
 		got := InitializeTipsTool("abctest.txt")
 		assert.Error(t, got)
-	})
-	t.Run("Checking data is loading or not from yml file", func(t *testing.T) {
-		got := InitializeTipsTool(fileName)
-		assert.Error(t, got)
+		os.Remove(path + "abctest.txt")
 	})
 	t.Run("if file is not present", func(t *testing.T) {
 		createfileError := func(string) (*os.File, error) {
@@ -256,6 +276,7 @@ func Test_initilizeTipsTool(t *testing.T) {
 		createFile = createfileError
 		got := InitializeTipsTool("abcDummy")
 		assert.Error(t, got)
+		os.Remove(path + "abcDummy")
 	})
 }
 
@@ -265,15 +286,17 @@ func TestIsExit(t *testing.T) {
 		want := false
 		assert.Equal(t, got, want)
 	})
+	mockremove()
 }
 
-func TestReadfromYMLConfig(t *testing.T) {
-	t.Run("Reading data from yml file", func(t *testing.T) {
-		_, err := readfromYMLConfig("/dummy/.json")
-		assert.Error(t, err)
-	})
-	t.Run(" getting noerror on reading data from yml file", func(t *testing.T) {
-		_, err := readfromYMLConfig(fileName)
-		assert.NoError(t, err)
-	})
+func mockremove() {
+	var err error
+	err = os.Remove(path + "/.tips.yml")
+	if err != nil {
+		fmt.Print(err)
+	}
+	err = os.Remove(path + "/.tips")
+	if err != nil {
+		fmt.Print(err)
+	}
 }
