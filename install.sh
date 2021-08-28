@@ -1,10 +1,11 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 set -e
 
 function prompt_error_msg() {
     MSG=$1
-    echo "$MSG" ; exit 1;
+    echo "$MSG"
+    exit 1
 }
 
 function install_tips() {
@@ -20,10 +21,10 @@ function install_tips() {
         prompt_error_msg "$message"
     fi
 
-    TIPS_DST=${TIPS_DST:-/usr/local/bin}
-    INSTALL_LOC="${TIPS_DST%/}/tips"
+    TIPS_DST=${TIPS_DST:-/tools}
+    INSTALL_LOC="${TIPS_DST%/}"
     message="ERROR: Cannot write to $TIPS_DST set TIPS_DST elsewhere or use sudo"
-    touch "$INSTALL_LOC" || promp_error $message
+    touch "$INSTALL_LOC" || promp_error "$message"
 
     arch=""
     if [ "$(uname -m)" = "x86_64" ]; then
@@ -33,18 +34,20 @@ function install_tips() {
     else
         arch="386"
     fi
+    LINUX="_linux_$arch.tar.gz"
+    TIPS_ARCHIVE="tips_$TIPS_VER$LINUX"
+    url="https://github.com/rajasoun/tips/releases/download/$TIPS_VER/$TIPS_ARCHIVE"
 
-    url="https://github.com/rajasoun/tips/releases/download/$TIPS_VER/tips_$TIPS_VER_linux_$arch.tar.gz"
+    mkdir -p "/tmp/tips"
+    TEMP_ARCHIVE="/tmp/tips/$TIPS_ARCHIVE"
+    echo "Downloading $url to $TEMP_ARCHIVE"
 
-    echo "Downloading $url"
-    curl -L "$url" -o "/tmp/tips_$TIPS_VER"
-    tar -xvzf /tmp/tips_$TIPS_VER/tips_$TIPS_VER_linux_$arch.tar.gz
-    chmod +rx /tmp/tips_$TIPS_VER/tips
-    mv /tmp/tips_$TIPS_VER/tips "$INSTALL_LOC"
-    rm -fr tmp/tips_$TIPS_VER
-
+    curl -L "$url" -o "$TEMP_ARCHIVE"
+    tar -xvzf "$TEMP_ARCHIVE" -C "$INSTALL_LOC" tips
+    chmod +x "$INSTALL_LOC/tips"
+    rm -fr "/tmp/tips"
     echo "TIPS $TIPS_VER has been installed to $INSTALL_LOC"
-    echo "tips --version"
+    tips --version
 }
 
 install_tips
