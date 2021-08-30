@@ -9,22 +9,6 @@ As developers we need to remember several commands related to git, docker, tdd, 
 Command Line Tool to provide tips on the command to be used based on the topic
 
 
-## Features
-
-A Tips tool with an easy terminal/User interface.
-
-```
-tips
-tips <flag>
-tips <command>
-tips --help
-tips --version
-tips git/docker
-tips git/docker <command>
-tips git/docker <command> <flag>
-
-```
-
 ## Usage
 
 ### Tips tool Usage
@@ -64,4 +48,13 @@ Use "tips [command] --help" for more information about a command.
 3. We followed TDD design while building the Tips cli app, Also used Testify library for testing test cases.
 
 
-##  Running Notes
+##  Installation
+
+# tips - tips toll for git, docker
+
+curl -fsSL https://raw.githubusercontent.com/rajasoun/tips/main/install.sh | bash
+export PATH="/opt/shellspec:/tools:$PATH"
+
+
+
+
