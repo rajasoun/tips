@@ -50,10 +50,10 @@ Use "tips [command] --help" for more information about a command.
 
 ##  Installation
 
-# tips - tips toll for git, docker
-
+```
 curl -fsSL https://raw.githubusercontent.com/rajasoun/tips/main/install.sh | bash
 export PATH="/opt/shellspec:/tools:$PATH"
+```
 
 
 
