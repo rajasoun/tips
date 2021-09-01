@@ -6,29 +6,23 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
-	"net/http"
-	"os"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.rajasoun/tips/controller"
 
-	"gopkg.in/yaml.v2"
+	// "github.rajasoun/tips/config"
+
+	"github.rajasoun/tips/controller"
 )
 
 var (
-	gitCmd                   = GitCommand()
-	rootCmd                  = NewRootCmd()
-	dockerCmd                = DockerCommand()
-	cmd                      *cobra.Command
-	debug, cfgFile, toolName string
-
-	createFile = os.Create
-	copyData   = io.Copy
-	getRequest = http.Get
-	path       = os.Getenv("HOME")
-	fileName   = "/.tips.yml"
+	gitCmd          = GitCommand()
+	rootCmd         = NewRootCmd()
+	dockerCmd       = DockerCommand()
+	cmd             *cobra.Command
+	debug, toolName string
+	// cfgFile
+	fileName = "/.tips.yml"
 )
 
 const (
@@ -36,7 +30,6 @@ const (
 	validArg    string = "git"
 	emptyString string = ""
 	firstLetter string = "g"
-	dataLink    string = "https://raw.githubusercontent.com/rajasoun/tips/main/data/tips.json"
 )
 
 func NewRootCmd() *cobra.Command {
@@ -53,8 +46,7 @@ tips git push
 tips docker ps`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var err error
-			//	setConfigFilePath()
-			_ = InitializeTipsTool(fileName)
+			_ = TipsConfigurationSetting(fileName)
 			if len(args) == 0 {
 				err = cmd.Help()
 			} else if err := isValidArguments(cmd.OutOrStdout(), args); err != nil {
@@ -66,60 +58,13 @@ tips docker ps`,
 	return cmd
 }
 
-// git command functionality
-func GitCommand() *cobra.Command {
-	var gitcmd = &cobra.Command{
-		Use:   "git",
-		Short: "Git is a DevOps tool used for source code management.",
-		Long: ` "Git is used to tracking changes in the source code,
- enabling multiple developers to work together on non-linear development"`,
-		Aliases: []string{},
-		Version: "0.1v",
-		Example: `tips git <command>
-
-tips git stash
-"Saving current state of unstaged changes to tracked files : git stash -k" `,
-		Args: cobra.MaximumNArgs(1),
-
-		RunE: func(cmd *cobra.Command, args []string) error {
-			toolName = "git"
-			err := isValidTopic(args, toolName, cmd)
-			return err
-		},
-	}
-	return gitcmd
-}
-
-//  docker command functionality
-func DockerCommand() *cobra.Command {
-	var dockercmd = &cobra.Command{
-		Use:   "docker",
-		Short: "Docker provides the ability to package and run an application.",
-		Long: ` "Docker is a software platform that simplifies the process of building, running,
-managing and distributing applications."`,
-		Aliases: []string{},
-		Version: "0.1v",
-		Example: `tips docker <command>
-
-tips docker ps
-"List all containers : docker ps -a "`,
-		Args: cobra.MaximumNArgs(1),
-
-		RunE: func(cmd *cobra.Command, args []string) error {
-			toolName = "docker"
-			err := isValidTopic(args, toolName, cmd)
-			return err
-		},
-	}
-	return dockercmd
-}
-
 // Execute executes the root command.
 func Execute(writer io.Writer) error {
 	rootCmd.SetOutput(writer)
 	return rootCmd.Execute()
 }
 
+//  put into another file , file name like validationUtil.go
 //  Checking argument and pass input to controller
 func isValidTopic(args []string, toolName string, cmd *cobra.Command) error {
 	switch {
@@ -179,113 +124,10 @@ func isValidArguments(writer io.Writer, args []string) error {
 	return errors.New("invalid command for tips")
 }
 
-// setting log level
-func setUpLogs(out io.Writer, level string) error {
-	logrus.SetOutput(out)
-	logLevel, err := logrus.ParseLevel(level)
-	if err != nil {
-		return err
-	}
-	logrus.SetLevel(logLevel)
-	logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})
-	return nil
-}
-
 func init() {
 	cmd.PersistentFlags().StringVarP(&debug, "debug", "", "", "verbose logging")
 	_ = cmd.PersistentFlags().MarkHidden("debug")
 	rootCmd.AddCommand(gitCmd)
 	rootCmd.AddCommand(dockerCmd)
-	cmd.PersistentFlags().StringVarP(&cfgFile, "cfgFile", "", "", "config file (default is $HOME/.tips.yaml ,path is $HOME/.tips/tips.json)")
-}
-
-type confYml struct {
-	Dir string `yaml:"tipsDataPath"`
-}
-
-func isExist(fileDir string) bool {
-	if fileInfo, err := os.Stat(fileDir); err != nil {
-		if os.IsNotExist(err) && fileInfo == nil {
-			return false
-		}
-	}
-	return true
-}
-func checkTipsData(fileName string) bool {
-	pathv := path + fileName
-	return isExist(pathv)
-}
-
-func createDir(dirPath string) error {
-	info, err := createFile(dirPath) // create tips.yml
-	if err != nil {
-		fmt.Println("File info", info)
-		return errors.New("issue on creating file")
-	}
-	return rewriteDatainYml(dirPath)
-}
-func rewriteDatainYml(dirPath string) error {
-	configData := map[string]string{
-		"tipsDataPath": "/.tips/tips.json",
-	}
-	if cfgFile != "" {
-		configData["tipsDataPath"] = cfgFile
-	}
-	logrus.WithField("path", configData).Debug("path mention")
-	data, _ := yaml.Marshal(&configData)
-	_ = ioutil.WriteFile(dirPath, data, 0)
-	return nil
-}
-
-// download url json file and save in filepath
-func downloadFileFromURL(url string, filepath string) error {
-	out, err := createFile(filepath)
-	if err != nil {
-		logrus.WithField("err", err).Debug("issue in creating file")
-		return err
-	}
-	defer out.Close()
-	resp, err := getRequest(url)
-	if err != nil {
-		logrus.WithField("err", err).Debug("getting err on get http request")
-		return err
-	}
-	defer resp.Body.Close()
-	_, err = copyData(out, resp.Body)
-	if err != nil {
-		logrus.WithField("err", err).Debug("getting error on copy data in dir")
-		return err
-	}
-	return nil
-}
-
-// reading yml file data
-func readfromYMLConfig(filePath string) (confYml, error) {
-	config := confYml{}
-	yamlFile, err := ioutil.ReadFile(path + filePath)
-	if err != nil {
-		return config, err
-	}
-	err = yaml.Unmarshal(yamlFile, &config)
-	return config, err
-}
-
-func InitializeTipsTool(fileName string) error {
-	var err error
-	if !checkTipsData(fileName) {
-		err = createDir(path + fileName)
-		if err != nil {
-			return err
-		}
-	} else {
-		_ = rewriteDatainYml(path + fileName)
-	}
-	// into other file
-	if cfgFile == "" {
-		pathValue, _ := readfromYMLConfig(fileName)
-		_ = os.Mkdir(path+"/.tips", 0700)
-		err = downloadFileFromURL(dataLink, path+pathValue.Dir)
-		logrus.WithField("download", err).Debug("not able to download")
-	}
-	return err
+	// cmd.PersistentFlags().StringVarP(&cfgFile, "cfgFile", "", "", "config file (default is $HOME/.tips.yaml or $HOME/.tips/tips.json)")
 }

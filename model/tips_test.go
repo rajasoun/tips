@@ -107,14 +107,14 @@ func TestReadfromYMLConfig(t *testing.T) {
 		assert.Error(t, err)
 	})
 	t.Run("checking the user file path ", func(t *testing.T) {
-		err := mockcreatetestfile("testfile.yml", "dummy/dummy.txt")
+		err := mockcreatetestfile("testfile.yml", "$HOME/dummy/dummy.txt")
 		if err != nil {
 			t.Fatal(err)
 		}
 		path = ""
 		got, err := readfromYMLConfig("testfile.yml")
 		want := "dummy/dummy.txt"
-		assert.Equal(t, got, want)
+		assert.Contains(t, got, want)
 		assert.NoError(t, err)
 		os.Remove("testfile.yml")
 	})
@@ -138,7 +138,8 @@ func mockcreatetestfile(testfile string, data string) error {
 		return err
 	}
 	filedata := map[string]string{
-		"tipsDataPath": data,
+		"tipsDataLocalPath":  data,
+		"tipsDataRemotePath": "",
 	}
 	dataa, _ := yaml.Marshal(&filedata)
 	err = ioutil.WriteFile(testfile, dataa, 0)

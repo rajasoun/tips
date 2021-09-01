@@ -24,7 +24,8 @@ type Tools struct {
 }
 
 type confYml struct {
-	Dir string `yaml:"tipsDataPath"`
+	TipsDataLocalPath  string `yaml:"tipsDataLocalPath"`
+	TipsDataRemotePath string `yaml:"tipsDataRemotePath"`
 }
 
 const (
@@ -33,8 +34,9 @@ const (
 )
 
 var (
-	path     = os.Getenv("HOME")
+	path     = os.Getenv("HOME") + dir
 	fileName = "/.tips.yml"
+	dir      = "/.tips"
 	fileRead = os.ReadFile
 )
 
@@ -43,8 +45,10 @@ func GetTip(title string) string {
 	data, _ := loadTipsFromJSON()
 	commands := getAllCommands(data, title)
 	for _, tip := range commands {
+		logrus.WithField("value", tip).Debug("getting valid tips from json, cmd exist")
 		return tip
 	}
+	logrus.WithField("value", defaultValue).Debug("getting invalid tips from json, cmd not exist")
 	return defaultValue
 }
 
@@ -79,25 +83,30 @@ func loadTipsFromJSON() (Tools, error) {
 	data, _ = readJSONFile(path)
 	var result Tools
 	err := json.Unmarshal(data, &result)
+	logrus.WithField("error", err).Debug("loading the data from json")
 	return result, err
 }
 
-// for main -- path should be $home+read from .tips.yml file from user side
-// for testing -- ..//data/tips.json
+// Run from main -- path should be $home+/.tips/.tips.yml file from user side
+// and  --  jsonfile path should be $home+/.tips/data.json file from user side
+// Run for testing -- ..//data/tips.json
 
+// reading yml file config data from path (($home+/.tips/.tips.yml))
 func readfromYMLConfig(fileName string) (string, error) {
 	config := confYml{}
 	yamlFile, err := ioutil.ReadFile(path + fileName)
 	if err != nil {
+		logrus.WithField("error", err).Debug("facing issue on reading .tips.yml file")
 		return "", err
 	}
 	err = yaml.Unmarshal(yamlFile, &config)
-	// fmt.Println("Path", config.Dir)
-	logrus.WithField("command", config).Debug("path")
-	if strings.Contains(config.Dir, ".tips/tips.json") {
-		return path + config.Dir, err
+	if strings.Contains(config.TipsDataLocalPath, "$HOME") {
+		value := strings.ReplaceAll(config.TipsDataLocalPath, "$HOME", "")
+		logrus.WithField("config data", config).Debug("successfully get json data file path")
+		return os.Getenv("HOME") + value, err
 	}
-	return config.Dir, err
+	logrus.WithField("config data", config).Debug("successfully get json data file path")
+	return config.TipsDataLocalPath, err
 }
 
 // getting file path for main file and testing function
@@ -110,7 +119,6 @@ func getJSONFilePath() string {
 		currentDir = strings.ReplaceAll(currentDir, baseDir, "")
 		currentDir += "/data/tips.json"
 	}
-	// return currentDir + "/data/tips.json" // file path
 	return currentDir
 }
 
