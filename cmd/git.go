@@ -8,6 +8,8 @@ var (
 	gitCmd = GitCommand()
 )
 
+//  git command functionality
+
 func GitCommand() *cobra.Command {
 	var gitcmd = &cobra.Command{
 		Use:   "git",

@@ -4,7 +4,6 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -79,7 +78,6 @@ func TestExecute(t *testing.T) {
 				assert.Error(t, err)
 			} else {
 				gotWriter := writer.String()
-				fmt.Print(gotWriter)
 				assert.Contains(t, gotWriter, tt.want)
 			}
 		})

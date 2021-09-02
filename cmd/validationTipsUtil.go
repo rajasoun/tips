@@ -15,9 +15,14 @@ import (
 
 const (
 	validLen    int    = 1
-	validArg    string = "git"
 	emptyString string = ""
-	firstLetter string = "g"
+)
+
+var (
+	validArgDocker = "docker"
+	dockerSuggest  = "d"
+	gitSuggest     = "g"
+	validArgGit    = "git"
 )
 
 //  Checking argument and pass input to controller
@@ -61,19 +66,16 @@ func getTopic(args []string) (string, error) {
 
 //  checking  userinput validation
 func isValidInput(userInput string) bool {
-	if len(userInput) > validLen && len(userInput) != 0 || userInput == validArg {
+	if len(userInput) > validLen && len(userInput) != 0 {
 		return true
 	}
 	return false
 }
 
-var validArgDocker = "docker"
-var dockerSuggest = "d"
-
 // checking valid arguments
 func isValidArguments(writer io.Writer, args []string) error {
-	if args[0] != validArg || args[0] != validArgDocker {
-		if string(args[0][0]) == firstLetter {
+	if args[0] != validArgGit || args[0] != validArgDocker {
+		if string(args[0][0]) == gitSuggest {
 			fmt.Fprint(writer, "Did you mean this? \n git\n\n ")
 		} else if string(args[0][0]) == dockerSuggest {
 			fmt.Fprint(writer, "Did you mean this? \n docker\n\n ")

@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// setting log level
+// setting log level status for debugging
 func setUpLogs(out io.Writer, level string) error {
 	logrus.SetOutput(out)
 	logLevel, err := logrus.ParseLevel(level)

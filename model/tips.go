@@ -21,6 +21,7 @@ type Tips struct {
 type Tools struct {
 	Git    []Tips `json:"git"`
 	Docker []Tips `json:"docker"`
+	Linux  []Tips `json:"linux"`
 }
 
 type confYml struct {
@@ -57,16 +58,24 @@ func getAllCommands(data Tools, title string) []string {
 	title += emptyString
 	cmdTool := strings.Split(title, emptyString)
 	commands := make([]string, 0)
-	if cmdTool[0] == "git" {
+	switch {
+	case cmdTool[0] == "git":
 		for _, value := range data.Git {
 			if strings.Contains(value.Tip, cmdTool[1]) || strings.Contains(value.Title, cmdTool[1]) {
 				command := value.Title + " : " + value.Tip
 				commands = append(commands, command)
 			}
 		}
-	} else if cmdTool[0] == "docker" {
+	case cmdTool[0] == "docker":
 		for _, value := range data.Docker {
 			if strings.Contains(value.Tip, cmdTool[1]) {
+				command := value.Title + " : " + value.Tip
+				commands = append(commands, command)
+			}
+		}
+	case cmdTool[0] == "linux":
+		for _, value := range data.Linux {
+			if strings.Contains(value.Tip, cmdTool[1]) || strings.Contains(value.Title, cmdTool[1]) {
 				command := value.Title + " : " + value.Tip
 				commands = append(commands, command)
 			}

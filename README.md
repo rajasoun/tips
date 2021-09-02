@@ -32,6 +32,7 @@ Available Commands:
   docker      Docker provides the ability to package and run an application.
   git         Git is a DevOps tool used for source code management.
   help        Help about any command
+  linux       Linux is an open source operating system (OS)
 
 Flags:
       --config string   config file (default is $HOME/.tips.yaml)
@@ -54,7 +55,3 @@ Use "tips [command] --help" for more information about a command.
 curl -fsSL https://raw.githubusercontent.com/rajasoun/tips/main/install.sh | bash
 export PATH="/opt/shellspec:/tools:$PATH"
 ```
-
-
-
-

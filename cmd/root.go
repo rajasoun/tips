@@ -16,6 +16,7 @@ var (
 	fileName = "/.tips.yml"
 )
 
+//  root tips cli functionality
 func NewRootCmd() *cobra.Command {
 	cmd = &cobra.Command{
 		Use:     "tips",
@@ -52,6 +53,7 @@ func init() {
 	_ = cmd.PersistentFlags().MarkHidden("debug")
 	rootCmd.AddCommand(gitCmd)
 	rootCmd.AddCommand(dockerCmd)
+	rootCmd.AddCommand(linuxCmd)
 	// cmd.PersistentFlags().StringVarP(&cfgFile, "cfgFile", "", "", "config file (default is $HOME/.tips.yaml or $HOME/.tips/tips.json)")
 	_ = tipsConfigurationSetting(fileName)
 }

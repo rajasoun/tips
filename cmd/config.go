@@ -133,7 +133,7 @@ func readfromYMLConfig(filePath string) (confYml, error) {
 	return config, err
 }
 
-// updating the dst path value
+// updating the dst path value(get $HOME value)
 func getPath(pathValue string) string {
 	var homeVar = "$HOME"
 	if strings.Contains(pathValue, homeVar) {

@@ -4,7 +4,6 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -30,7 +29,6 @@ func Test_DockerCommand(t *testing.T) {
 				assert.Error(t, err)
 			} else {
 				gotWriter := writer.String()
-				fmt.Print(gotWriter)
 				assert.Contains(t, gotWriter, tt.want)
 			}
 		})

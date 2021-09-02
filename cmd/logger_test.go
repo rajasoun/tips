@@ -4,7 +4,6 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -27,7 +26,6 @@ func Test_SetLogger(t *testing.T) {
 				assert.Error(t, err)
 			} else {
 				got := output.String()
-				fmt.Print(got)
 				want := tt.want
 				assert.Equal(t, got, want)
 			}
