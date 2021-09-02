@@ -4,6 +4,10 @@ package cmd
 
 import "github.com/spf13/cobra"
 
+var (
+	gitCmd = GitCommand()
+)
+
 func GitCommand() *cobra.Command {
 	var gitcmd = &cobra.Command{
 		Use:   "git",

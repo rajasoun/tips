@@ -1,6 +1,4 @@
-{
-	"git": [
-
+{"git": [
 		{
 			"title":"Everyday Git in twenty commands or so",
 			"tip":"git help everyday"
@@ -764,9 +762,7 @@
 			"title":"Prevent auto replacing LF with CRLF",
 			"tip":"git config --global core.autocrlf false"
 		 }
-		]
-
-		,
+		],
 	"docker": [
         {
 			"title": "Everyday Git in twenty commands or so",
@@ -816,6 +812,6 @@
 			"title":"delete a stopped container",
 			"tip": "docker rm <container id>"
 		}
-
 	]
+
 }

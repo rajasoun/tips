@@ -75,7 +75,7 @@ func TestFileConfigurationSetting(t *testing.T) {
 		input      string
 		want       string
 	}{
-		{testdetail: "check if Home dir is present", input: "$HOME/.tips/data.json", want: "/home/vscode/.tips/data.json"},
+		{testdetail: "check if Home dir is present", input: "$HOME/.tips/data.json", want: os.Getenv("HOME") + "/.tips/data.json"},
 		{testdetail: "check if Home dir is not present", input: "/.dummy/data.txt", want: "/.dummy/data.txt"},
 	}
 
@@ -117,13 +117,13 @@ func Test_tipsConfigurationSetting(t *testing.T) {
 		if isExist(path + dir) {
 			os.RemoveAll(path + dir)
 		}
-		got := TipsConfigurationSetting("/.tips.yml")
+		got := tipsConfigurationSetting("/.tips.yml")
 		assert.NoError(t, got)
 	})
 	t.Run("getting error when creating dir", func(t *testing.T) {
 		path = ""
 		dir = "/.dummy"
-		got := TipsConfigurationSetting("/.tips.txt")
+		got := tipsConfigurationSetting("/.tips.txt")
 		assert.Error(t, got)
 	})
 	t.Run("getting error when downloading file from url", func(t *testing.T) {
@@ -133,7 +133,7 @@ func Test_tipsConfigurationSetting(t *testing.T) {
 		configLink = "dummy.dummy.com"
 		path = os.Getenv("HOME")
 		dir = "/.testdummy"
-		got := TipsConfigurationSetting("/.tips.txt")
+		got := tipsConfigurationSetting("/.tips.txt")
 		assert.Error(t, got)
 	})
 	t.Run("getting error when reading the file", func(t *testing.T) {
@@ -143,7 +143,7 @@ func Test_tipsConfigurationSetting(t *testing.T) {
 		configLink = "https://raw.githubusercontent.com/rajasoun/tips/main/data/tips.yml"
 		path = ""
 		dir = "dummy"
-		got := TipsConfigurationSetting("")
+		got := tipsConfigurationSetting("")
 		assert.Error(t, got)
 	})
 	t.Run("checking yml / json file exist or not,if .tips dir is exist", func(t *testing.T) {
@@ -155,7 +155,7 @@ func Test_tipsConfigurationSetting(t *testing.T) {
 		}
 		path = os.Getenv("HOME")
 		dir = "/.testdir"
-		got := TipsConfigurationSetting("/.tips.yml")
+		got := tipsConfigurationSetting("/.tips.yml")
 		assert.NoError(t, got)
 		os.RemoveAll(os.Getenv("HOME") + "/" + ".testdir")
 	})

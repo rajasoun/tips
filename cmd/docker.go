@@ -4,6 +4,10 @@ package cmd
 
 import "github.com/spf13/cobra"
 
+var (
+	dockerCmd = DockerCommand()
+)
+
 //  docker command functionality
 func DockerCommand() *cobra.Command {
 	var dockercmd = &cobra.Command{

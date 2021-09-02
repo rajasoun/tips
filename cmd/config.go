@@ -3,7 +3,6 @@
 package cmd
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -22,11 +21,52 @@ var (
 	readResponseBody = io.ReadAll
 )
 
+// yml file struct
 type confYml struct {
 	TipsDataLocalPath  string `yaml:"tipsDataLocalPath"`
 	TipsDataRemotePath string `yaml:"tipsDataRemotePath"`
 }
 
+// set json data file path
+func tipsConfigurationSetting(fileName string) error {
+	var err error
+	switch {
+	case !isExist(path + dir):
+		err = os.Mkdir(path+dir, 0700)
+		if err != nil {
+			logrus.WithField("error", err).Debug("facing issue on making directory at path:", path+dir)
+			return err
+		}
+		err = downloadToFile(configLink, path+dir+fileName)
+		if err != nil {
+			logrus.WithField("error", err).Debug("facing issue on download file from url at path:", path+dir+fileName)
+			return err
+		}
+		pathValue, err := readfromYMLConfig(path + dir + fileName)
+		if err != nil {
+			logrus.WithField("error", err).Debug("facing issue on download file from url at path:", path+dir+fileName)
+			return err
+		}
+		localPath := getPath(pathValue.TipsDataLocalPath)
+		_ = downloadToFile(pathValue.TipsDataRemotePath, localPath)
+		logrus.WithField("Path location", localPath).Debug("successfully download the file at location from", pathValue.TipsDataRemotePath)
+	case isExist(path + dir):
+		if !isExist(path + dir + fileName) {
+			err = downloadToFile(configLink, path+dir+fileName)
+			logrus.WithField("error", err).Debug("downloaded the yml file if .tips dir is exist")
+		}
+		if !isExist(path + dir + "/" + "data.json") {
+			pathValue, _ := readfromYMLConfig(path + dir + fileName)
+			localPath := getPath(pathValue.TipsDataLocalPath)
+			err = downloadToFile(pathValue.TipsDataRemotePath, localPath)
+			logrus.WithField("error", err).Debug("downloaded the files if .tips dir is exist")
+			return err
+		}
+	}
+	return nil
+}
+
+// returning file is exist or not exist
 func isExist(name string) bool {
 	if fileInfo, err := os.Stat(name); err != nil {
 		if os.IsNotExist(err) && fileInfo == nil {
@@ -38,6 +78,7 @@ func isExist(name string) bool {
 	return true
 }
 
+// get and read response from url link
 func httPDownload(url string) ([]byte, error) {
 	res, err := getHTTPRequest(url)
 	if err != nil {
@@ -54,6 +95,7 @@ func httPDownload(url string) ([]byte, error) {
 	return bytesData, err
 }
 
+// write the url data into file
 func writeFile(dst string, data []byte) error {
 	err := ioutil.WriteFile(dst, data, 0444) // only read permission
 	if err != nil {
@@ -64,6 +106,7 @@ func writeFile(dst string, data []byte) error {
 	return nil
 }
 
+// download the file at dst path
 func downloadToFile(url string, dst string) error {
 	var err error
 	var bytesData []byte
@@ -90,47 +133,7 @@ func readfromYMLConfig(filePath string) (confYml, error) {
 	return config, err
 }
 
-// add setconfigfunc
-func TipsConfigurationSetting(fileName string) error {
-	var err error
-	switch {
-	case !isExist(path + dir):
-		err = os.Mkdir(path+dir, 0700)
-		if err != nil {
-			logrus.WithField("error", err).Debug("facing issue on making directory at path:", path+dir)
-			return err
-		}
-		err = downloadToFile(configLink, path+dir+fileName)
-		if err != nil {
-			logrus.WithField("error", err).Debug("facing issue on download file from url at path:", path+dir+fileName)
-			return err
-		}
-		pathValue, err := readfromYMLConfig(path + dir + fileName)
-		if err != nil {
-			logrus.WithField("error", err).Debug("facing issue on download file from url at path:", path+dir+fileName)
-			return err
-		}
-		localPath := getPath(pathValue.TipsDataLocalPath)
-		_ = downloadToFile(pathValue.TipsDataRemotePath, localPath)
-		fmt.Print("downloaded successfully")
-		logrus.WithField("Path location", localPath).Debug("successfully download the file at location from", pathValue.TipsDataRemotePath)
-	case isExist(path + dir):
-		// if possible then convert into switch
-		if !isExist(path + dir + fileName) {
-			err = downloadToFile(configLink, path+dir+fileName)
-			if !isExist(path + dir + "/" + "data.json") {
-				pathValue, _ := readfromYMLConfig(path + dir + fileName)
-				localPath := getPath(pathValue.TipsDataLocalPath)
-				err = downloadToFile(pathValue.TipsDataRemotePath, localPath)
-			}
-			// one more condition for check data.json file
-			logrus.WithField("error", err).Debug("downloaded the files if .tips dir is exist")
-			return err
-		}
-	}
-	return nil
-}
-
+// updating the dst path value
 func getPath(pathValue string) string {
 	var homeVar = "$HOME"
 	if strings.Contains(pathValue, homeVar) {
