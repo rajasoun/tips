@@ -27,6 +27,7 @@ func TestGetTip(t *testing.T) {
 		{name: "Get Tip for valid Topic - rebase", input: "git rebase", want: "Rebases 'feature' to 'master' and merges it in to master  : git rebase master feature && git checkout master && git merge -"},
 		{name: "Get Tip for invalid Topic - dummy", input: "dummy", want: "invalid command ,please pass valid tool command "},
 		{name: "Get Tip for valid Topic - log", input: "docker log", want: "Search change by content : docker log -S'<a term in the source>'"},
+		{name: "Get Tip for valid Topic - move", input: "linux move", want: "move a file/directory from one location to another. : mv [Source] [Destination]"},
 	}
 	for _, tt := range inputOuputData {
 		t.Run(tt.name, func(t *testing.T) {
@@ -107,14 +108,14 @@ func TestReadfromYMLConfig(t *testing.T) {
 		assert.Error(t, err)
 	})
 	t.Run("checking the user file path ", func(t *testing.T) {
-		err := mockcreatetestfile("testfile.yml", "dummy/dummy.txt")
+		err := mockcreatetestfile("testfile.yml", "$HOME/dummy/dummy.txt")
 		if err != nil {
 			t.Fatal(err)
 		}
 		path = ""
 		got, err := readfromYMLConfig("testfile.yml")
 		want := "dummy/dummy.txt"
-		assert.Equal(t, got, want)
+		assert.Contains(t, got, want)
 		assert.NoError(t, err)
 		os.Remove("testfile.yml")
 	})
@@ -138,7 +139,8 @@ func mockcreatetestfile(testfile string, data string) error {
 		return err
 	}
 	filedata := map[string]string{
-		"tipsDataPath": data,
+		"tipsDataLocalPath":  data,
+		"tipsDataRemotePath": "",
 	}
 	dataa, _ := yaml.Marshal(&filedata)
 	err = ioutil.WriteFile(testfile, dataa, 0)
