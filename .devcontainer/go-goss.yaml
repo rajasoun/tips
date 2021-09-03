@@ -3,7 +3,7 @@ command:
   go version:
     exit-status: 0
     stdout:
-      - 1.16.6
+      - 1.16.7
     stderr: []
     timeout: 0
   goss --version:
@@ -21,13 +21,13 @@ command:
   node --version:
     exit-status: 0
     stdout:
-      - v14.17.4
+      - v14.17.6
     stderr: []
     timeout: 0
   gh --version:
     exit-status: 0
     stdout:
-      - 1.13.1
+      - 2.0.0
     stderr: []
     timeout: 0
   shellspec --version:
@@ -36,9 +36,9 @@ command:
       - 0.28.1
     stderr: []
     timeout: 0
-  kcov --version:
-    exit-status: 0
-    stdout:
-      - 38
-    stderr: []
-    timeout: 0
+  # kcov --version:
+  #   exit-status: 0
+  #   stdout:
+  #     - 38
+  #   stderr: []
+  #   timeout: 0
