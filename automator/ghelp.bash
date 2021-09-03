@@ -50,9 +50,22 @@ release			- Release through Automation
 }
 
 function _git_tag() {
-	VERSION=$(git describe --tags --abbrev=0 | awk -F. '{OFS="."; $NF+=1; print $0}')
-	git tag -a "$VERSION" -m "tip : $VERSION | For Release"
-	git push origin "$VERSION" --no-verify
+	CUR_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+	if [ "$CUR_BRANCH" != "main" ]; then
+		echo "${RED} Need to be in main branch ${NC}"
+		return 1
+	fi
+
+	GIT_CLEAN="$(git status --porcelain)"
+	if [ -z "$GIT_CLEAN" ]; then
+		git fetch --prune --tags
+		VERSION=$(git describe --tags --abbrev=0 | awk -F. '{OFS="."; $NF+=1; print $0}')
+		git tag -a "$VERSION" -m "tip : $VERSION | For Release"
+		git push origin "$VERSION" --no-verify
+		git fetch --prune --tags
+	else
+		echo "${RED} Git Not Clean... ${NC}"
+	fi
 }
 
 function _teardown_git_flow() {
@@ -210,8 +223,9 @@ alias gclean="git fetch --prune origin && git gc"
 #shellcheck disable=SC2145
 alias glogin="git_hub_login $@"
 alias gstatus="gh auth status --hostname dotenv get GITHUB_URL "
-alias release="npm --prefix shift-left run release"
-alias gtag="_git_tag"
+#alias release="npm --prefix shift-left run release"
+# alias gtag="_git_tag"
+alias release="_git_tag"
 
 #-------------------------------------------------------------
 # Generic Alias Commands
