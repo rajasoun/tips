@@ -49,4 +49,5 @@ function install_tips() {
     echo "TIPS $TIPS_VER has been installed to $INSTALL_LOC"
 }
 
+mkdir -p /tools
 install_tips
