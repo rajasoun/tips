@@ -58,33 +58,26 @@ func getAllCommands(data Tools, title string) []string {
 	title += emptyString
 	cmdTool := strings.Split(title, emptyString)
 	commands := make([]string, 0)
-
 	switch {
 	case cmdTool[0] == "git":
-		for _, value := range data.Git {
-			if strings.Contains(strings.ToLower(value.Tip), cmdTool[1]) || strings.Contains(strings.ToLower(value.Title), cmdTool[1]) {
-				command := value.Title + " : " + value.Tip
-				commands = append(commands, command)
-			}
-		}
+		commands = gettingToolcmd(data.Git, cmdTool[1])
 	case cmdTool[0] == "docker":
-		for _, value := range data.Docker {
-			if strings.Contains(strings.ToLower(value.Tip), cmdTool[1]) || strings.Contains(strings.ToLower(value.Title), cmdTool[1]) {
-				command := value.Title + " : " + value.Tip
-				commands = append(commands, command)
-			}
-		}
+		commands = gettingToolcmd(data.Docker, cmdTool[1])
 	case cmdTool[0] == "linux":
-		for _, value := range data.Linux {
-			if strings.Contains(strings.ToLower(value.Tip), cmdTool[1]) || strings.Contains(strings.ToLower(value.Title), cmdTool[1]) {
-				command := value.Title + " : " + value.Tip
-				commands = append(commands, command)
-			}
+		commands = gettingToolcmd(data.Linux, cmdTool[1])
+	}
+	return commands
+}
+func gettingToolcmd(tool []Tips, input string) []string {
+	commands := make([]string, 0)
+	for _, value := range tool {
+		if strings.Contains(strings.ToLower(value.Tip), input) || strings.Contains(strings.ToLower(value.Title), input) {
+			command := value.Title + " : " + value.Tip
+			commands = append(commands, command)
 		}
 	}
 	return commands
 }
-
 func loadTipsFromJSON() (Tools, error) {
 	// run an app from main.go -> file path should be "data/tips.json" from developer side
 	// if want to check all unit test cases ->file path should be "../data/tips.json"
