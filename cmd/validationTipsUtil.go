@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"regexp"
+	"unicode"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -33,7 +35,7 @@ func isValidTopic(args []string, toolName string, cmd *cobra.Command) error {
 		return err
 	case len(args) == 0 && debug != emptyString:
 		return errors.New("please add an argument to debug")
-	case args[0] != emptyString || debug != emptyString:
+	case args[0] != emptyString || debug != emptyString || args[0] == "":
 		if debug != emptyString {
 			err := setUpLogs(cmd.OutOrStdout(), debug)
 			if err != nil {
@@ -60,13 +62,15 @@ func getTopic(args []string) (string, error) {
 	if isValidInput(userInput) {
 		logrus.WithField("topic", userInput).Debug("successfully validation checked")
 		return userInput, nil
+	} else if !isAlphabeticChar(userInput) {
+		return "", errors.New("does not be contains special char/digit")
 	}
-	return "", errors.New("argument should be greater than 1")
+	return "", errors.New("argument should not be empty/should be greater than 1")
 }
 
 //  checking  userinput validation
 func isValidInput(userInput string) bool {
-	if len(userInput) > validLen && len(userInput) != 0 {
+	if len(userInput) > validLen && isAlphabeticChar(userInput) {
 		return true
 	}
 	return false
@@ -84,4 +88,17 @@ func isValidArguments(writer io.Writer, args []string) error {
 	fmt.Fprint(writer, "unknown command ", args[0], " for tips \n")
 	logrus.WithField("command", args[0]).Debug("unknown command for tips ")
 	return errors.New("invalid command for tips")
+}
+
+func isAlphabeticChar(input string) bool {
+	isAlpha := regexp.MustCompile(`^[A-Za-z]+$`).MatchString
+	return isAlpha(input) && !hasSymbol(input)
+}
+func hasSymbol(input string) bool {
+	for _, letter := range input {
+		if unicode.IsSymbol(letter) {
+			return true
+		}
+	}
+	return false
 }

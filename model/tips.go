@@ -30,7 +30,7 @@ type confYml struct {
 }
 
 const (
-	defaultValue = "invalid command ,please pass valid tool command "
+	defaultValue = "Tip is not available for this input,please pass valid input"
 	emptyString  = " "
 )
 
@@ -58,24 +58,25 @@ func getAllCommands(data Tools, title string) []string {
 	title += emptyString
 	cmdTool := strings.Split(title, emptyString)
 	commands := make([]string, 0)
+
 	switch {
 	case cmdTool[0] == "git":
 		for _, value := range data.Git {
-			if strings.Contains(value.Tip, cmdTool[1]) || strings.Contains(value.Title, cmdTool[1]) {
+			if strings.Contains(strings.ToLower(value.Tip), cmdTool[1]) || strings.Contains(strings.ToLower(value.Title), cmdTool[1]) {
 				command := value.Title + " : " + value.Tip
 				commands = append(commands, command)
 			}
 		}
 	case cmdTool[0] == "docker":
 		for _, value := range data.Docker {
-			if strings.Contains(value.Tip, cmdTool[1]) {
+			if strings.Contains(strings.ToLower(value.Tip), cmdTool[1]) || strings.Contains(strings.ToLower(value.Title), cmdTool[1]) {
 				command := value.Title + " : " + value.Tip
 				commands = append(commands, command)
 			}
 		}
 	case cmdTool[0] == "linux":
 		for _, value := range data.Linux {
-			if strings.Contains(value.Tip, cmdTool[1]) || strings.Contains(value.Title, cmdTool[1]) {
+			if strings.Contains(strings.ToLower(value.Tip), cmdTool[1]) || strings.Contains(strings.ToLower(value.Title), cmdTool[1]) {
 				command := value.Title + " : " + value.Tip
 				commands = append(commands, command)
 			}

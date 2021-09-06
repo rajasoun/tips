@@ -4,6 +4,7 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"testing"
 
@@ -56,6 +57,17 @@ func Test_GitCommand(t *testing.T) {
 		rootCmd.SetOut(outputBuffer)
 		rootCmd.SetArgs([]string{"git", "push", "--debug", "dummy"})
 		err := gitCmd.Execute()
+		assert.Error(t, err)
+	})
+}
+
+func Test_Cases(t *testing.T) {
+	t.Run("empty with ", func(t *testing.T) {
+		outputBuffer := bytes.NewBufferString("")
+		rootCmd.SetOut(outputBuffer)
+		rootCmd.SetArgs([]string{"git", ""})
+		err := gitCmd.Execute()
+		fmt.Print(gitCmd.Execute())
 		assert.Error(t, err)
 	})
 }

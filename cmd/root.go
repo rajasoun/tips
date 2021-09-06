@@ -20,15 +20,16 @@ var (
 func NewRootCmd() *cobra.Command {
 	cmd = &cobra.Command{
 		Use:     "tips",
-		Long:    "tips provides help for docker and git cli commands ",
+		Long:    "tips provides help for docker ,git and linux cli commands ",
 		Short:   "tips for command line interface function",
 		Aliases: []string{},
 		Version: "0.1v",
 		Args:    cobra.MaximumNArgs(1),
-		Example: `-> tips <tool_name> <command>
+		Example: `-> tips <tool_name> <command/topic>
 
 tips git push
-tips docker ps`,
+tips docker ps
+tips linux move`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var err error
 			if len(args) == 0 {

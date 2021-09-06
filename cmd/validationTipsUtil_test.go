@@ -61,3 +61,29 @@ func TestValidationTipsUtil(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+func TestCases(t *testing.T) {
+	tests := []struct {
+		testDetails string
+		input       string
+		want        bool
+	}{
+		{testDetails: "check input having digit values", input: "123a", want: false},
+		{testDetails: "check input having special letter", input: "-!$$$$", want: false},
+		{testDetails: "check input having only alphabets", input: "Abc", want: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.testDetails, func(t *testing.T) {
+			got := isAlphabeticChar(tt.input)
+			assert.Equal(t, got, tt.want)
+		})
+	}
+	t.Run("", func(t *testing.T) {
+		got1 := hasSymbol("$$$$")
+		assert.Equal(t, got1, true)
+	})
+	t.Run("", func(t *testing.T) {
+		got1, err := getTopic([]string{"$$$$"})
+		assert.Error(t, err)
+		assert.Equal(t, got1, "")
+	})
+}
