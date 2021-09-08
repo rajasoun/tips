@@ -9,32 +9,35 @@ import (
 )
 
 var (
-	rootCmd         = NewRootCmd()
-	cmd             *cobra.Command
-	debug, toolName string
-	// cfgFile
+	rootCmd  = NewRootCmd()
+	cmd      *cobra.Command
+	toolName string
+	// configPath
 	fileName = "/.tips.yml"
+	debug    bool
 )
 
 //  root tips cli functionality
 func NewRootCmd() *cobra.Command {
 	cmd = &cobra.Command{
 		Use:     "tips",
-		Long:    "tips provides help for docker ,git and linux cli commands ",
-		Short:   "tips for command line interface function",
+		Long:    "Tips provides help for docker , git and linux cli commands ",
+		Short:   "Tips for command line interface function",
 		Aliases: []string{},
 		Version: "0.1v",
 		Args:    cobra.MaximumNArgs(1),
-		Example: `-> tips <tool_name> <command/topic>
-
-tips git push
-tips docker ps
-tips linux move`,
+		Example: `SYNTAX: tips <tool_name> <command/topic>
+E.g:
+        "tips git saving"
+        "tips docker ps"
+        "tips linux move"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var err error
+			// checking logger status is set or not
+			_ = checklogger()
 			if len(args) == 0 {
 				err = cmd.Help()
-			} else if err := isValidArguments(cmd.OutOrStdout(), args); err != nil {
+			} else if err := suggestedArgument(cmd.OutOrStdout(), args); err != nil {
 				return err
 			}
 			return err
@@ -50,11 +53,11 @@ func Execute(writer io.Writer) error {
 }
 
 func init() {
-	cmd.PersistentFlags().StringVarP(&debug, "debug", "", "", "verbose logging")
+	cmd.PersistentFlags().BoolVar(&debug, "debug", false, "set log level to debug")
 	_ = cmd.PersistentFlags().MarkHidden("debug")
 	rootCmd.AddCommand(gitCmd)
 	rootCmd.AddCommand(dockerCmd)
 	rootCmd.AddCommand(linuxCmd)
-	// cmd.PersistentFlags().StringVarP(&cfgFile, "cfgFile", "", "", "config file (default is $HOME/.tips.yaml or $HOME/.tips/tips.json)")
+	// cmd.PersistentFlags().StringVarP(&configPath, "configPath", "", "", "config file (default is $HOME/.tips.yaml or $HOME/.tips/tips.json)")
 	_ = tipsConfigurationSetting(fileName)
 }

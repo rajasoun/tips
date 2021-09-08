@@ -19,6 +19,7 @@ var (
 	path             = os.Getenv("HOME")
 	getHTTPRequest   = http.Get
 	readResponseBody = io.ReadAll
+	loggerStatus     = "debug"
 )
 
 // yml file struct
@@ -143,4 +144,13 @@ func getPath(pathValue string) string {
 		return homeDir + pathValue
 	}
 	return pathValue
+}
+
+func checklogger() bool {
+	if debug {
+		_ = setUpLogs(cmd.OutOrStdout(), "debug")
+		logrus.WithField("loglevel", loggerStatus).Debug("successfully set logger level to debug ")
+		return true
+	}
+	return false
 }

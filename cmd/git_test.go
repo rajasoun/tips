@@ -45,20 +45,6 @@ func Test_GitCommand(t *testing.T) {
 		got := string(out)
 		assert.Contains(t, got, expected, "expected \"%s\" got \"%s\"", expected, got)
 	})
-	t.Run("checking valid command", func(t *testing.T) {
-		outputBuffer := bytes.NewBufferString("")
-		rootCmd.SetOut(outputBuffer)
-		rootCmd.SetArgs([]string{"git", "--debug", "debug"})
-		err := gitCmd.Execute()
-		assert.Error(t, err)
-	})
-	t.Run("checking  valid logger status", func(t *testing.T) {
-		outputBuffer := bytes.NewBufferString("")
-		rootCmd.SetOut(outputBuffer)
-		rootCmd.SetArgs([]string{"git", "push", "--debug", "dummy"})
-		err := gitCmd.Execute()
-		assert.Error(t, err)
-	})
 }
 
 func Test_Cases(t *testing.T) {

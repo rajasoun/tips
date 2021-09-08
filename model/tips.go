@@ -17,6 +17,7 @@ import (
 type Tips struct {
 	Title string `json:"title"`
 	Tip   string `json:"tip"`
+	// Alternatives []string `json:"alternatives"`
 }
 type Tools struct {
 	Git    []Tips `json:"git"`
@@ -72,15 +73,13 @@ func gettingToolcmd(tool []Tips, input string) []string {
 	commands := make([]string, 0)
 	for _, value := range tool {
 		if strings.Contains(strings.ToLower(value.Tip), input) || strings.Contains(strings.ToLower(value.Title), input) {
-			command := value.Title + " : " + value.Tip
+			command := value.Tip + "    :    " + strings.ToUpper(value.Title)
 			commands = append(commands, command)
 		}
 	}
 	return commands
 }
 func loadTipsFromJSON() (Tools, error) {
-	// run an app from main.go -> file path should be "data/tips.json" from developer side
-	// if want to check all unit test cases ->file path should be "../data/tips.json"
 	var path = getJSONFilePath()
 	var data []byte
 	data, _ = readJSONFile(path)
@@ -94,7 +93,6 @@ func loadTipsFromJSON() (Tools, error) {
 // and  --  jsonfile path should be $home+/.tips/data.json file from user side
 // Run for testing -- ..//data/tips.json
 
-// reading yml file config data from path (($home+/.tips/.tips.yml))
 func readfromYMLConfig(fileName string) (string, error) {
 	config := confYml{}
 	yamlFile, err := ioutil.ReadFile(path + fileName)

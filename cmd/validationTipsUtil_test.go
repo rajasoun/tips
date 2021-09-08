@@ -13,7 +13,7 @@ import (
 func TestValidationTipsUtil(t *testing.T) {
 	t.Run("check valid data", func(t *testing.T) {
 		input := []string{"check"}
-		got, err := getTopic(input)
+		got, err := getValidTopic(input)
 		if err != nil {
 			assert.Error(t, err)
 		} else {
@@ -23,7 +23,7 @@ func TestValidationTipsUtil(t *testing.T) {
 	})
 	t.Run("check related commands and suggest", func(t *testing.T) {
 		output := bytes.Buffer{}
-		err := isValidArguments(&output, []string{"g"})
+		err := suggestedArgument(&output, []string{"g"})
 		got := output.String()
 		want := "Did you mean this?"
 		assert.Contains(t, got, want)
@@ -31,7 +31,7 @@ func TestValidationTipsUtil(t *testing.T) {
 	})
 	t.Run("check related commands and suggest", func(t *testing.T) {
 		output := bytes.Buffer{}
-		err := isValidArguments(&output, []string{"d"})
+		err := suggestedArgument(&output, []string{"d"})
 		got := output.String()
 		want := "Did you mean this?"
 		assert.Contains(t, got, want)
@@ -82,7 +82,7 @@ func TestCases(t *testing.T) {
 		assert.Equal(t, got1, true)
 	})
 	t.Run("", func(t *testing.T) {
-		got1, err := getTopic([]string{"$$$$"})
+		got1, err := getValidTopic([]string{"$$$$"})
 		assert.Error(t, err)
 		assert.Equal(t, got1, "")
 	})

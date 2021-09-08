@@ -19,7 +19,7 @@ func init() {
 func TestReadFile(t *testing.T) {
 	t.Run("Load Json File and check if it contains the tip starting with Everyday ", func(t *testing.T) {
 		got, _ := readJSONFile("../data/tips.json")
-		expected := "Everyday Git in twenty commands or so"
+		expected := "show helpful guides that come with Git"
 		assert.Contains(t, string(got), expected)
 	})
 

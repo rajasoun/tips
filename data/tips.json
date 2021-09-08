@@ -1,8 +1,4 @@
 {"git": [
-    {
-        "title":"Everyday Git in twenty commands or so",
-        "tip":"git help everyday"
-     },
      {
         "title":"show helpful guides that come with Git",
         "tip":"git help -g"
@@ -16,8 +12,8 @@
         "tip":"git log -p <file_name>"
      },
      {
-        "title":"remove sensitive data from history, after a push",
-        "tip":"git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch <path-to-your-file>' --prune-empty --tag-name-filter cat -- --all && git push origin --force --all"
+        "title":"push changes local to global",
+        "tip":"git push origin <branceName>"
      },
      {
         "title":"Sync with remote, overwrite local changes",
@@ -294,12 +290,8 @@
         "tip":"git clean -f -d"
      },
      {
-        "title":"Update all the submodules",
-        "tip":"git submodule foreach git pull",
-        "alternatives":[
-           "git submodule update --init --recursive",
-           "git submodule update --remote"
-        ]
+        "title":"pull changes from global to local",
+        "tip":"git pull"
      },
      {
         "title":"Show all commits in the current branch yet to be merged to master",
