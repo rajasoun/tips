@@ -24,10 +24,10 @@ func TestGetTip(t *testing.T) {
 		input string
 		want  string
 	}{
-		{name: "Get Tip for valid Topic - rebase", input: "git rebase", want: "git rebase master feature && git checkout master && git merge -    :    REBASES 'FEATURE' TO 'MASTER' AND MERGES IT IN TO MASTER "},
+		{name: "Get Tip for valid Topic - rebase", input: "git,rebase", want: "git rebase master feature && git checkout master && git merge -    :    REBASES 'FEATURE' TO 'MASTER' AND MERGES IT IN TO MASTER "},
 		{name: "Get Tip for invalid Topic - dummy", input: "dummy", want: "Tip is not available for this input,please pass valid input"},
-		{name: "Get Tip for valid Topic - log", input: "docker log", want: "docker log -S'<a term in the source>'    :    SEARCH CHANGE BY CONTENT"},
-		{name: "Get Tip for valid Topic - move", input: "linux move", want: "mv [Source] [Destination]    :    MOVE A FILE/DIRECTORY FROM ONE LOCATION TO ANOTHER."},
+		{name: "Get Tip for valid Topic - log", input: "docker,log", want: "docker log -S'<a term in the source>'    :    SEARCH CHANGE BY CONTENT"},
+		{name: "Get Tip for valid Topic - move", input: "linux,move", want: "mv [Source] [Destination]    :    MOVE A FILE/DIRECTORY FROM ONE LOCATION TO ANOTHER."},
 	}
 	for _, tt := range inputOuputData {
 		t.Run(tt.name, func(t *testing.T) {

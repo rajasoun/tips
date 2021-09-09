@@ -38,7 +38,7 @@ func isValidedArguments(args []string, toolName string, cmd *cobra.Command) (str
 		logrus.WithField("err", err).Debug("invalid user input")
 		return input, err
 	}
-	input = toolName + " " + input
+	input = toolName + "," + input
 	logrus.WithField("userInput", input).Debug("successfully getting valid input")
 	return input, nil
 }
@@ -79,7 +79,7 @@ func suggestedArgument(writer io.Writer, args []string) error {
 
 // checking input
 func isAlphabeticChar(input string) bool {
-	isAlpha := regexp.MustCompile(`^[A-Za-z]+$`).MatchString
+	isAlpha := regexp.MustCompile(`^[A-Za-z ]+$`).MatchString
 	return isAlpha(input) && !hasSymbol(input)
 }
 

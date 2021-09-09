@@ -32,7 +32,8 @@ type confYml struct {
 
 const (
 	defaultValue = "Tip is not available for this input,please pass valid input"
-	emptyString  = " "
+	// emptyString   = " "
+	specialLetter = ","
 )
 
 var (
@@ -56,8 +57,8 @@ func GetTip(title string) string {
 
 // getting all tips and titles
 func getAllCommands(data Tools, title string) []string {
-	title += emptyString
-	cmdTool := strings.Split(title, emptyString)
+	title += specialLetter
+	cmdTool := strings.Split(title, specialLetter)
 	commands := make([]string, 0)
 	switch {
 	case cmdTool[0] == "git":
