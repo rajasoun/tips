@@ -22,9 +22,8 @@ enabling multiple developers to work together on non-linear development"`,
 		Aliases: []string{},
 		Version: "0.1v",
 		Example: `tips git <command>
-E.g:
 "tips git stash"
-"git stash -k    :    SAVING CURRENT STATE OF UNSTAGED CHANGES TO TRACKED FILES" `,
+"git stash -k    :    SAVING CURRENT STATE OF UNSTAGED CHANGES TO TRACKED FILES"`,
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			_ = checklogger()

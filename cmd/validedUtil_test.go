@@ -70,6 +70,9 @@ func TestCases(t *testing.T) {
 		{testDetails: "check input having digit values", input: "123a", want: false},
 		{testDetails: "check input having special letter", input: "-!$$$$", want: false},
 		{testDetails: "check input having only alphabets", input: "Abc", want: true},
+		{testDetails: "check input having string with more than one words", input: "copy the dir", want: true},
+		{testDetails: "check input having string with more than one words with unneed spaces", input: " copy the dir  ", want: false},
+		{testDetails: "check input having string with more than one words", input: "copy the $8dir", want: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.testDetails, func(t *testing.T) {

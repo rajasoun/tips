@@ -79,7 +79,7 @@ func suggestedArgument(writer io.Writer, args []string) error {
 
 // checking input
 func isAlphabeticChar(input string) bool {
-	isAlpha := regexp.MustCompile(`^[A-Za-z ]+$`).MatchString
+	isAlpha := regexp.MustCompile(`^[a-zA-Z_]+( [a-zA-Z_]+)*$`).MatchString
 	return isAlpha(input) && !hasSymbol(input)
 }
 

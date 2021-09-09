@@ -15,17 +15,18 @@ Command Line Tool to provide tips on the command to be used based on the topic
 ```
 $ tips
 
-  tips provides help for docker and git cli commands
+  tips provides help for docker , linux and git cli commands
 
 Usage:
   tips [flags]
   tips [command]
 
 Examples:
--> tips <tool_name> <command>
+-> tips <tool_name> <command/topic>
 
 tips git push
 tips docker ps
+tips linux move
 
 Available Commands:
   completion  generate the autocompletion script for the specified shell
