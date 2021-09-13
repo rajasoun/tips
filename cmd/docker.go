@@ -2,7 +2,10 @@
 
 package cmd
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/spf13/cobra"
+	"github.rajasoun/tips/controller"
+)
 
 var (
 	dockerCmd = DockerCommand()
@@ -19,14 +22,16 @@ managing and distributing applications."`,
 
 		Version: "0.1v",
 		Example: `tips docker <command>
-
 tips docker ps
-"List all containers : docker ps -a "`,
+"docker ps -a    :    LIST ALL CONTAINERS"`,
 		Args: cobra.MaximumNArgs(1),
-
 		RunE: func(cmd *cobra.Command, args []string) error {
+			_ = checklogger()
 			toolName = "docker"
-			err := isValidTopic(args, toolName, cmd)
+			input, err := isValidedArguments(args, toolName, cmd)
+			if err == nil && input != "" {
+				controller.GetTipForTopic(input, cmd.OutOrStdout())
+			}
 			return err
 		},
 	}

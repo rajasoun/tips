@@ -13,7 +13,7 @@ import (
 func TestValidationTipsUtil(t *testing.T) {
 	t.Run("check valid data", func(t *testing.T) {
 		input := []string{"check"}
-		got, err := getTopic(input)
+		got, err := getValidTopic(input)
 		if err != nil {
 			assert.Error(t, err)
 		} else {
@@ -23,7 +23,7 @@ func TestValidationTipsUtil(t *testing.T) {
 	})
 	t.Run("check related commands and suggest", func(t *testing.T) {
 		output := bytes.Buffer{}
-		err := isValidArguments(&output, []string{"g"})
+		err := suggestedArgument(&output, []string{"g"})
 		got := output.String()
 		want := "Did you mean this?"
 		assert.Contains(t, got, want)
@@ -31,7 +31,7 @@ func TestValidationTipsUtil(t *testing.T) {
 	})
 	t.Run("check related commands and suggest", func(t *testing.T) {
 		output := bytes.Buffer{}
-		err := isValidArguments(&output, []string{"d"})
+		err := suggestedArgument(&output, []string{"d"})
 		got := output.String()
 		want := "Did you mean this?"
 		assert.Contains(t, got, want)
@@ -59,5 +59,34 @@ func TestValidationTipsUtil(t *testing.T) {
 		rootCmd.SetArgs([]string{"gi"})
 		err := gitCmd.Execute()
 		assert.Error(t, err)
+	})
+}
+func TestCases(t *testing.T) {
+	tests := []struct {
+		testDetails string
+		input       string
+		want        bool
+	}{
+		{testDetails: "check input having digit values", input: "123a", want: false},
+		{testDetails: "check input having special letter", input: "-!$$$$", want: false},
+		{testDetails: "check input having only alphabets", input: "Abc", want: true},
+		{testDetails: "check input having string with more than one words", input: "copy the dir", want: true},
+		{testDetails: "check input having string with more than one words with unneed spaces", input: " copy the dir  ", want: false},
+		{testDetails: "check input having string with more than one words", input: "copy the $8dir", want: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.testDetails, func(t *testing.T) {
+			got := isAlphabeticChar(tt.input)
+			assert.Equal(t, got, tt.want)
+		})
+	}
+	t.Run("", func(t *testing.T) {
+		got1 := hasSymbol("$$$$")
+		assert.Equal(t, got1, true)
+	})
+	t.Run("", func(t *testing.T) {
+		got1, err := getValidTopic([]string{"$$$$"})
+		assert.Error(t, err)
+		assert.Equal(t, got1, "")
 	})
 }

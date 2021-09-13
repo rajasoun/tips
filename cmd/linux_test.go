@@ -18,7 +18,7 @@ func Test_LinuxCommand(t *testing.T) {
 			assert.Error(t, err)
 		} else {
 			gotWriter := writer.String()
-			assert.Contains(t, gotWriter, "move")
+			assert.Contains(t, gotWriter, "mv")
 		}
 	})
 }

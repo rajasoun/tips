@@ -17,6 +17,7 @@ import (
 type Tips struct {
 	Title string `json:"title"`
 	Tip   string `json:"tip"`
+	// Alternatives []string `json:"alternatives"`
 }
 type Tools struct {
 	Git    []Tips `json:"git"`
@@ -30,8 +31,9 @@ type confYml struct {
 }
 
 const (
-	defaultValue = "invalid command ,please pass valid tool command "
-	emptyString  = " "
+	defaultValue = "Tip is not available for this input,please pass valid input"
+	// emptyString   = " "
+	specialLetter = ","
 )
 
 var (
@@ -55,38 +57,30 @@ func GetTip(title string) string {
 
 // getting all tips and titles
 func getAllCommands(data Tools, title string) []string {
-	title += emptyString
-	cmdTool := strings.Split(title, emptyString)
+	title += specialLetter
+	cmdTool := strings.Split(title, specialLetter)
 	commands := make([]string, 0)
 	switch {
 	case cmdTool[0] == "git":
-		for _, value := range data.Git {
-			if strings.Contains(value.Tip, cmdTool[1]) || strings.Contains(value.Title, cmdTool[1]) {
-				command := value.Title + " : " + value.Tip
-				commands = append(commands, command)
-			}
-		}
+		commands = gettingToolcmd(data.Git, cmdTool[1])
 	case cmdTool[0] == "docker":
-		for _, value := range data.Docker {
-			if strings.Contains(value.Tip, cmdTool[1]) {
-				command := value.Title + " : " + value.Tip
-				commands = append(commands, command)
-			}
-		}
+		commands = gettingToolcmd(data.Docker, cmdTool[1])
 	case cmdTool[0] == "linux":
-		for _, value := range data.Linux {
-			if strings.Contains(value.Tip, cmdTool[1]) || strings.Contains(value.Title, cmdTool[1]) {
-				command := value.Title + " : " + value.Tip
-				commands = append(commands, command)
-			}
+		commands = gettingToolcmd(data.Linux, cmdTool[1])
+	}
+	return commands
+}
+func gettingToolcmd(tool []Tips, input string) []string {
+	commands := make([]string, 0)
+	for _, value := range tool {
+		if strings.Contains(strings.ToLower(value.Tip), input) || strings.Contains(strings.ToLower(value.Title), input) {
+			command := value.Tip + "    :    " + strings.ToUpper(value.Title)
+			commands = append(commands, command)
 		}
 	}
 	return commands
 }
-
 func loadTipsFromJSON() (Tools, error) {
-	// run an app from main.go -> file path should be "data/tips.json" from developer side
-	// if want to check all unit test cases ->file path should be "../data/tips.json"
 	var path = getJSONFilePath()
 	var data []byte
 	data, _ = readJSONFile(path)
@@ -100,7 +94,6 @@ func loadTipsFromJSON() (Tools, error) {
 // and  --  jsonfile path should be $home+/.tips/data.json file from user side
 // Run for testing -- ..//data/tips.json
 
-// reading yml file config data from path (($home+/.tips/.tips.yml))
 func readfromYMLConfig(fileName string) (string, error) {
 	config := confYml{}
 	yamlFile, err := ioutil.ReadFile(path + fileName)

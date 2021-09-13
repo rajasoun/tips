@@ -192,3 +192,15 @@ func Test_httpDownload(t *testing.T) {
 		assert.Nil(t, got)
 	})
 }
+
+func TestChecklogger(t *testing.T) {
+	t.Run("checking debug flag is not set", func(t *testing.T) {
+		got := checklogger()
+		assert.Equal(t, got, false)
+	})
+	t.Run("checking debug flag is set", func(t *testing.T) {
+		debug = true
+		got := checklogger()
+		assert.Equal(t, got, true)
+	})
+}

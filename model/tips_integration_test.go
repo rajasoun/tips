@@ -15,11 +15,11 @@ func init() {
 	os.Setenv("GO_ENV", "test")
 }
 
-//integration testing:
+// integration testing:
 func TestReadFile(t *testing.T) {
 	t.Run("Load Json File and check if it contains the tip starting with Everyday ", func(t *testing.T) {
-		got, _ := readJsonFile("../data/tips.json")
-		expected := "Everyday Git in twenty commands or so"
+		got, _ := readJSONFile("../data/tips.json")
+		expected := "show helpful guides that come with Git"
 		assert.Contains(t, string(got), expected)
 	})
 
@@ -27,7 +27,7 @@ func TestReadFile(t *testing.T) {
 func TestGet_wd(t *testing.T) {
 	t.Run("checking current working directory path", func(t *testing.T) {
 		got, _ := getCurrentWorkingDir()
-		want := "/gophers/workspace/tips"
+		want := "/workspaces/tips/model"
 		assert.Contains(t, got, want)
 	})
 }

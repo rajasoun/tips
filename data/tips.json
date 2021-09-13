@@ -1,23 +1,19 @@
 {"git": [
-    {
-        "title":"Everyday Git in twenty commands or so",
-        "tip":"git help everyday"
-     },
      {
-        "title":"Show helpful guides that come with Git",
+        "title":"show helpful guides that come with Git",
         "tip":"git help -g"
      },
      {
-        "title":"Search change by content",
+        "title":"search change by content",
         "tip":"git log -S'<a term in the source>'"
      },
      {
-        "title":"Show changes over time for specific file",
+        "title":"show changes over time for specific file",
         "tip":"git log -p <file_name>"
      },
      {
-        "title":"Remove sensitive data from history, after a push",
-        "tip":"git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch <path-to-your-file>' --prune-empty --tag-name-filter cat -- --all && git push origin --force --all"
+        "title":"push changes local to global",
+        "tip":"git push origin <branceName>"
      },
      {
         "title":"Sync with remote, overwrite local changes",
@@ -294,12 +290,8 @@
         "tip":"git clean -f -d"
      },
      {
-        "title":"Update all the submodules",
-        "tip":"git submodule foreach git pull",
-        "alternatives":[
-           "git submodule update --init --recursive",
-           "git submodule update --remote"
-        ]
+        "title":"pull changes from global to local",
+        "tip":"git pull"
      },
      {
         "title":"Show all commits in the current branch yet to be merged to master",
@@ -547,7 +539,7 @@
      },
      {
         "title":"Find guilty with binary search",
-        "tip":"git bisect start                    # Search start \ngit bisect bad                      # Set point to bad commit \ngit bisect good v2.6.13-rc2         # Set point to good commit|tag \ngit bisect bad                      # Say current state is bad \ngit bisect good                     # Say current state is good \ngit bisect reset                    # Finish search \n"
+        "tip":"git bisect start"
      },
      {
         "title":"Bypass pre-commit and commit-msg githooks",
@@ -755,8 +747,8 @@
         "tip":"git config --global url.'git@github.com:'.insteadOf 'https://github.com/'"
      },
      {
-        "title":"Update a submodule to the latest commit",
-        "tip":"cd <path-to-submodule>\ngit pull origin <branch>\ncd <root-of-your-main-project>\ngit add <path-to-submodule>\ngit commit -m \"submodule updated\""
+        "title":"changes global to local ",
+        "tip":"git pull"
      },
      {
         "title":"Prevent auto replacing LF with CRLF",
@@ -765,7 +757,7 @@
     ],
 "docker": [
     {
-        "title": "Everyday Git in twenty commands or so",
+        "title": "Helping docker cmd",
         "tip": "docker run --help "
     },
     {
@@ -827,27 +819,27 @@
 		"tip":"ls -l"
 	},
 	{
-		"title":"read the contents of one or more files and display their contents inside the terminal",
+		"title":"Read the contents of one or more files and display their contents inside the terminal",
 		"tip":"'cat [Filename(s)]' or 'cat <filename>'"
 	},
 	{
-		"title":"create a new file",
+		"title":"Create a new file",
 		"tip":"touch [Filename]"
 	},
 	{
-		"title":"create new directories inside an existing working directory from the terminal.",
+		"title":"Create new directories inside an existing working directory from the terminal.",
 		"tip":"mkdir <Directory Name>"
 	},
 	{
-		"title":"print current Working Directory",
+		"title":"Print current Working Directory",
 		"tip":"pwd"
 	},
 	{
-		"title":"display a line of text/string which is passed in as an argument",
+		"title":"Display a line of text/string which is passed in as an argument",
 		"tip":"echo [String]"
 	},
 	{
-		"title":"delete files and directories",
+		"title":"Delete files and directories",
 		"tip":"rm [file] /rm -r [dir]"
 	},
 	{
@@ -867,14 +859,12 @@
 		"tip":"tree [Options]"
 	},
 	{
-		"title":"allows a user to edit any text content inside the vim text editor from the terminal.",
+		"title":"Allows a user to edit any text content inside the vim text editor from the terminal.",
 		"tip":"vi [Options] [Filename]"
 	},
 	{
 		"title":"vim editor shortcuts",
 		"tip":"i:insert, dd:delete a line, yy:copy, p/P:paste, u:undo, Crtl+r:redo, :wq:save and quit, :q:quit without saving"
 	}
-
 	]
-
 }
