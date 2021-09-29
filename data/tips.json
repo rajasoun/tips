@@ -1,4 +1,8 @@
 {"git": [
+      {
+      "title":"Displays the state of the working directory",
+      "tip":"git status"
+      },
      {
         "title":"show helpful guides that come with Git",
         "tip":"git help -g"
@@ -852,7 +856,7 @@
 	},
 	{
 		"title":"copy files/directories from one location to another",
-		"tip":"cp [Options] [Source].. [Destination]"
+		"tip":"cp [Options] [Source] [Destination]"
 	},
 	{
 		"title":"list out the contents of directories ",
@@ -866,5 +870,65 @@
 		"title":"vim editor shortcuts",
 		"tip":"i:insert, dd:delete a line, yy:copy, p/P:paste, u:undo, Crtl+r:redo, :wq:save and quit, :q:quit without saving"
 	}
-	]
+	],
+   "pip":[
+      {
+         "title":" Return the name and description of all the matching packages",
+         "tip":"pip search <package>"
+      },
+      {
+         "title":"To install package",
+         "tip":"pip install <package>"
+      },
+      {
+         "title":"To get details about a package",
+         "tip":"pip show <package>"
+      },
+      {
+         "title":"Remove any package from system",
+         "tip":"pip uninstall"
+      },
+      {
+         "title":"Returns the list of packages in the current environment",
+         "tip":"pip freeze"
+      }
+   ],
+   "sudo":[
+      {
+         "title":"Poweroff directly from your terminal",
+         "tip":"sudo poweroff"
+      },
+      {
+         "title":"To install, remove and upgrade any package ",
+         "tip":"sudo apt-get update"
+      },
+      {
+         "title":"some command that needs root's permission",
+         "tip":"sudo su"
+      },
+      {
+         "title":"Reboot your computer.",
+         "tip":"sudo reboot"
+      },
+      {
+         "title":"To get a root shell from your user account",
+         "tip":"sudo bash"
+      },
+      {
+         "title":"Edit files instead of running a command",
+         "tip":"exit"
+      },
+      {
+         "title":"end the current sudo privileges",
+         "tip":"sudo kill"
+      },
+      {
+         "title":"Display your username",
+         "tip":"sudo whoami"
+      },
+      {
+         "title":"Switch to root user",
+         "tip":"sudo bash"
+      }
+   ]
 }

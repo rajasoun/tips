@@ -23,6 +23,8 @@ type Tools struct {
 	Git    []Tips `json:"git"`
 	Docker []Tips `json:"docker"`
 	Linux  []Tips `json:"linux"`
+	Sudo   []Tips `json:"sudo"`
+	Pip    []Tips `json:"pip"`
 }
 
 type confYml struct {
@@ -67,6 +69,10 @@ func getAllCommands(data Tools, title string) []string {
 		commands = gettingToolcmd(data.Docker, cmdTool[1])
 	case cmdTool[0] == "linux":
 		commands = gettingToolcmd(data.Linux, cmdTool[1])
+	case cmdTool[0] == "sudo":
+		commands = gettingToolcmd(data.Sudo, cmdTool[1])
+	case cmdTool[0] == "pip":
+		commands = gettingToolcmd(data.Pip, cmdTool[1])
 	}
 	return commands
 }

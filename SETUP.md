@@ -18,7 +18,7 @@ Container environment for go TDD
 ### In Visual Studio Code with Remote Container Support
 
 1. Open project in visual studio code with
-1. Open Foledr in Remote Container
+1. Open Folder in Remote Container
 
 ### Setup
 

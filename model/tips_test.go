@@ -28,6 +28,9 @@ func TestGetTip(t *testing.T) {
 		{name: "Get Tip for invalid Topic - dummy", input: "dummy", want: "Tip is not available for this input,please pass valid input"},
 		{name: "Get Tip for valid Topic - log", input: "docker,log", want: "docker log -S'<a term in the source>'    :    SEARCH CHANGE BY CONTENT"},
 		{name: "Get Tip for valid Topic - move", input: "linux,move", want: "mv [Source] [Destination]    :    MOVE A FILE/DIRECTORY FROM ONE LOCATION TO ANOTHER."},
+		{name: "Get Tip for valid Topic - state", input: "git,state", want: "git status    :    DISPLAYS THE STATE OF THE WORKING DIRECTORY"},
+		{name: "Get Tip for valid Topic - poweroff", input: "sudo,poweroff", want: "sudo poweroff    :    POWEROFF DIRECTLY FROM YOUR TERMINAL"},
+		{name: "Get Tip for valid Topic - install", input: "pip,install", want: "pip install <package>    :    TO INSTALL PACKAGE"},
 	}
 	for _, tt := range inputOuputData {
 		t.Run(tt.name, func(t *testing.T) {

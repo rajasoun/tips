@@ -21,7 +21,7 @@ var (
 func NewRootCmd() *cobra.Command {
 	cmd = &cobra.Command{
 		Use:     "tips",
-		Long:    "Tips provides help for docker , git and linux cli commands ",
+		Long:    "Tips provides help for docker , git ,sudo , pip and linux cli commands ",
 		Short:   "Tips for command line interface function",
 		Aliases: []string{},
 		Version: "0.1v",
@@ -30,7 +30,9 @@ func NewRootCmd() *cobra.Command {
 E.g:
         "tips git saving"
         "tips docker ps"
-        "tips linux move"`,
+        "tips linux move"
+	"tips pip install"
+	"tips sudo reboot"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var err error
 			// checking logger status is set or not
@@ -58,6 +60,9 @@ func init() {
 	rootCmd.AddCommand(gitCmd)
 	rootCmd.AddCommand(dockerCmd)
 	rootCmd.AddCommand(linuxCmd)
+	rootCmd.AddCommand(sudoCmd)
+	rootCmd.AddCommand(pipCmd)
+
 	// cmd.PersistentFlags().StringVarP(&configPath, "configPath", "", "", "config file (default is $HOME/.tips.yaml or $HOME/.tips/tips.json)")
 	_ = tipsConfigurationSetting(fileName)
 }
